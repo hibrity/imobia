@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Captações</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando captações...</div>
+      </div>
+
+      <div class="row" style="max-width:460px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Filtros</h3>
+
+      <div class="row">
+        <input id="filter_city" placeholder="Cidade" />
+        <select id="filter_type">
+          <option value="">Todos os tipos</option>
+          <option value="house">Casa</option>
+          <option value="apartment">Apartamento</option>
+          <option value="land">Terreno</option>
+          <option value="commercial">Comercial</option>
+        </select>
+        <select id="filter_purpose">
+          <option value="">Venda ou aluguel</option>
+          <option value="sale">Venda</option>
+          <option value="rent">Aluguel</option>
+        </select>
+        <select id="filter_status">
+          <option value="">Todos os status</option>
+          <option value="pending">Pendente</option>
+          <option value="in_review">Em análise</option>
+          <option value="approved">Aprovado</option>
+          <option value="rejected">Rejeitado</option>
+        </select>
+      </div>
+
+      <button class="ghost" onclick="loadSubmissions()">Aplicar filtros</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Captações recebidas</h3>
+      <div id="submissions_list">Carregando...</div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+    let brokers = [];
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data;
+    }
+
+    async function loadBrokers() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*")
+        .eq("company_id", currentProfile.company_id)
+        .eq("role", "broker")
+        .eq("active", true)
+        .order("full_name", { ascending: true });
+
+      brokers = data || [];
+    }
+
+    function canModerate() {
+      return ["admin", "broker"].includes(currentProfile?.role);
+    }
+
+    function isAdmin() {
+      return currentProfile?.role === "admin";
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function propertyTypeLabel(v) {
+      if (v === "house") return "Casa";
+      if (v === "apartment") return "Apartamento";
+      if (v === "land") return "Terreno";
+      if (v === "commercial") return "Comercial";
+      return v || "-";
+    }
+
+    function purposeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function statusLabel(v) {
+      if (v === "pending") return "Pendente";
+      if (v === "in_review") return "Em análise";
+      if (v === "approved") return "Aprovado";
+      if (v === "rejected") return "Rejeitado";
+      return v || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function getBrokerNameByUserId(userId) {
+      const broker = brokers.find(b => b.user_id === userId);
+      return broker?.full_name || broker?.user_id || "-";
+    }
+
+    async function updateSubmissionField(id, field, value) {
+      if (!canModerate()) return;
+
+      const payload = {};
+      payload[field] = value;
+
+      const { error } = await supabase
+        .from("property_submissions")
+        .update(payload)
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadSubmissions();
+    }
+
+    async function assignSubmissionToMe(id) {
+      if (!canModerate()) return;
+
+      const { error } = await supabase
+        .from("property_submissions")
+        .update({
+          assigned_broker_user_id: currentUser.id,
+          status: "in_review"
+        })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadSubmissions();
+    }
+
+    async function saveAdminNotes(id) {
+      if (!canModerate()) return;
+
+      const notes = document.getElementById(`notes_${id}`).value;
+
+      const { error } = await supabase
+        .from("property_submissions")
+        .update({ admin_notes: notes || null })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadSubmissions();
+    }
+
+    async function approveSubmission(id) {
+      if (!isAdmin()) return;
+
+      const { error } = await supabase.rpc("imobix_approve_submission", {
+        p_submission_id: id
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadSubmissions();
+    }
+
+    async function rejectSubmission(id) {
+      if (!canModerate()) return;
+
+      const { error } = await supabase
+        .from("property_submissions")
+        .update({ status: "rejected" })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadSubmissions();
+    }
+
+    function renderBrokerOptions(selectedUserId) {
+      if (!brokers.length) {
+        return `<option value="">Sem corretores</option>`;
+      }
+
+      return `
+        <option value="">Sem corretor</option>
+        ${brokers.map(b => `
+          <option value="${b.user_id}" ${selectedUserId === b.user_id ? "selected" : ""}>
+            ${b.full_name || b.user_id}
+          </option>
+        `).join("")}
+      `;
+    }
+
+    async function loadSubmissions() {
+      const city = document.getElementById("filter_city").value.trim();
+      const type = document.getElementById("filter_type").value;
+      const purpose = document.getElementById("filter_purpose").value;
+      const status = document.getElementById("filter_status").value;
+
+      let query = supabase
+        .from("property_submissions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (currentProfile.role === "broker") {
+        query = query.or(`assigned_broker_user_id.eq.${currentUser.id},owner_user_id.eq.${currentUser.id}`);
+      }
+
+      if (currentProfile.role === "owner") {
+        query = query.eq("owner_user_id", currentUser.id);
+      }
+
+      if (city) query = query.ilike("city", `%${city}%`);
+      if (type) query = query.eq("property_type", type);
+      if (purpose) query = query.eq("purpose", purpose);
+      if (status) query = query.eq("status", status);
+
+      const { data, error } = await query;
+      const box = document.getElementById("submissions_list");
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      if (!data || !data.length) {
+        box.innerHTML = `<div class="item">Nenhuma captação encontrada.</div>`;
+        return;
+      }
+
+      box.innerHTML = data.map(s => {
+        const moderateBlock = canModerate()
+          ? `
+            <div class="row" style="margin-top:10px;">
+              <select onchange="updateSubmissionField('${s.id}','status',this.value)">
+                <option value="pending" ${s.status === "pending" ? "selected" : ""}>Pendente</option>
+                <option value="in_review" ${s.status === "in_review" ? "selected" : ""}>Em análise</option>
+                <option value="approved" ${s.status === "approved" ? "selected" : ""}>Aprovado</option>
+                <option value="rejected" ${s.status === "rejected" ? "selected" : ""}>Rejeitado</option>
+              </select>
+
+              <select onchange="updateSubmissionField('${s.id}','assigned_broker_user_id',this.value || null)">
+                ${renderBrokerOptions(s.assigned_broker_user_id)}
+              </select>
+            </div>
+
+            <textarea id="notes_${s.id}" placeholder="Notas internas">${s.admin_notes || ""}</textarea>
+
+            <div class="row">
+              <button class="ghost" onclick="saveAdminNotes('${s.id}')">Salvar notas</button>
+              <button class="warning" onclick="assignSubmissionToMe('${s.id}')">Assumir captação</button>
+            </div>
+          `
+          : "";
+
+        const adminBlock = isAdmin()
+          ? `
+            <div class="row" style="margin-top:10px;">
+              <button class="primary" onclick="approveSubmission('${s.id}')">Aprovar e converter</button>
+              <button class="danger" onclick="rejectSubmission('${s.id}')">Rejeitar</button>
+            </div>
+          `
+          : "";
+
+        return `
+          <div class="item">
+            <b>${s.title}</b><br>
+            ${propertyTypeLabel(s.property_type)} • ${purposeLabel(s.purpose)}<br>
+            ${s.city || "-"}${s.neighborhood ? " • " + s.neighborhood : ""}<br>
+            Preço desejado: ${formatMoney(s.price)}<br>
+            Proprietário: ${s.owner_name || "-"}<br>
+            Telefone: ${s.owner_phone || "-"}<br>
+            Email: ${s.owner_email || "-"}<br>
+            Corretor responsável: ${getBrokerNameByUserId(s.assigned_broker_user_id)}<br>
+            <span class="badge">${statusLabel(s.status)}</span>
+            ${s.description ? `<div class="muted" style="margin-top:8px;">${s.description}</div>` : ""}
+            ${s.admin_notes ? `<div class="item" style="margin-top:10px;"><b>Notas internas:</b><br>${s.admin_notes}</div>` : ""}
+            ${moderateBlock}
+            ${adminBlock}
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)}`;
+
+      await loadBrokers();
+      await loadSubmissions();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.loadSubmissions = loadSubmissions;
+    window.updateSubmissionField = updateSubmissionField;
+    window.assignSubmissionToMe = assignSubmissionToMe;
+    window.saveAdminNotes = saveAdminNotes;
+    window.approveSubmission = approveSubmission;
+    window.rejectSubmission = rejectSubmission;
+  </script>
+</body>
+</html>
