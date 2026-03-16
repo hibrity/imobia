@@ -345,7 +345,7 @@
 
           <div class="row">
             <button class="primary" onclick="generatePreview()">Gerar visualização</button>
-            <button class="ghost" onclick="saveVisualizationHistory()">Salvar simulação</button>
+            <button class="ghost" onclick="saveVisualizationHistory()">Salvar no banco</button>
           </div>
 
           <div id="generation_result"></div>
@@ -379,7 +379,7 @@
         </div>
 
         <div class="card">
-          <h3 style="margin-top:0;">Histórico local da visualização</h3>
+          <h3 style="margin-top:0;">Histórico salvo no banco</h3>
           <div id="history_box" class="history-box">Sem histórico ainda.</div>
         </div>
       </div>
@@ -391,26 +391,11 @@
     let currentProfile = null;
     let currentProperty = null;
     let propertyId = null;
+    let lastVisualization = null;
 
     function getQueryParam(name) {
       const url = new URL(window.location.href);
       return url.searchParams.get(name);
-    }
-
-    function getHistoryKey() {
-      return `imobia_visual_history_${propertyId || "no_property"}`;
-    }
-
-    function getLocalHistory() {
-      try {
-        return JSON.parse(localStorage.getItem(getHistoryKey()) || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function setLocalHistory(list) {
-      localStorage.setItem(getHistoryKey(), JSON.stringify(list));
     }
 
     async function logout() {
@@ -691,63 +676,84 @@
       const previewLabel = document.getElementById("preview_label");
       previewLabel.textContent = `${getProjectLabel(projectType)} • ${getStandardLabel(standard)} • ${lotUse}`;
 
-      document.getElementById("analysis_box").innerHTML =
-        buildAnalysis(projectType, standard, area, floors, notes);
+      const analysisHtml = buildAnalysis(projectType, standard, area, floors, notes);
+      document.getElementById("analysis_box").innerHTML = analysisHtml;
+
+      lastVisualization = {
+        company_id: currentProfile.company_id,
+        property_id: propertyId,
+        created_by: currentUser.id,
+        project_type: projectType,
+        construction_standard: standard,
+        lot_use: lotUse,
+        floors,
+        project_area: area,
+        notes: notes || null,
+        result_summary: analysisHtml.replace(/<br>/g, "\n").replace(/<[^>]+>/g, ""),
+        preview_data: {
+          previewLabel: previewLabel.textContent,
+          projectLabel: getProjectLabel(projectType),
+          standardLabel: getStandardLabel(standard),
+          lotUse
+        }
+      };
 
       document.getElementById("generation_result").innerHTML =
         `<div class="item">Simulação visual atualizada com sucesso.</div>`;
     }
 
-    function renderHistory() {
+    async function renderHistory() {
       const box = document.getElementById("history_box");
-      const history = getLocalHistory();
 
-      if (!history.length) {
+      const { data, error } = await supabase
+        .from("property_visualizations")
+        .select("*")
+        .eq("property_id", propertyId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      if (!data || !data.length) {
         box.innerHTML = "Sem histórico ainda.";
         return;
       }
 
-      box.innerHTML = history.map(h => `
+      box.innerHTML = data.map(h => `
         <div class="item">
-          <b>${h.projectLabel}</b><br>
-          Padrão: ${h.standardLabel}<br>
-          Área: ${h.area} m²<br>
-          Pavimentos: ${h.floors}<br>
-          Data: ${new Date(h.createdAt).toLocaleString("pt-BR")}<br>
+          <b>${getProjectLabel(h.project_type)}</b><br>
+          Padrão: ${getStandardLabel(h.construction_standard)}<br>
+          Área: ${h.project_area || "-"} m²<br>
+          Pavimentos: ${h.floors || "-"}<br>
+          Data: ${new Date(h.created_at).toLocaleString("pt-BR")}<br>
           ${h.notes ? `<div class="muted" style="margin-top:8px;">${h.notes}</div>` : ""}
         </div>
       `).join("");
     }
 
-    function saveVisualizationHistory() {
-      if (!currentProperty) return;
+    async function saveVisualizationHistory() {
+      if (!lastVisualization) {
+        document.getElementById("generation_result").innerHTML =
+          `<div class="item">Gere uma simulação antes de salvar.</div>`;
+        return;
+      }
 
-      const projectType = document.getElementById("project_type").value;
-      const standard = document.getElementById("construction_standard").value;
-      const floors = Math.max(1, Number(document.getElementById("floors").value || 1));
-      const area = Number(document.getElementById("project_area").value || suggestProjectArea());
-      const notes = document.getElementById("prompt_notes").value.trim();
+      const { error } = await supabase
+        .from("property_visualizations")
+        .insert(lastVisualization);
 
-      const entry = {
-        propertyId,
-        propertyTitle: currentProperty.title,
-        projectType,
-        projectLabel: getProjectLabel(projectType),
-        standard,
-        standardLabel: getStandardLabel(standard),
-        floors,
-        area,
-        notes,
-        createdAt: new Date().toISOString()
-      };
-
-      const history = getLocalHistory();
-      history.unshift(entry);
-      setLocalHistory(history.slice(0, 20));
-      renderHistory();
+      if (error) {
+        document.getElementById("generation_result").innerHTML =
+          `<div class="item">${error.message}</div>`;
+        return;
+      }
 
       document.getElementById("generation_result").innerHTML =
-        `<div class="item">Simulação salva no histórico local.</div>`;
+        `<div class="item">Simulação salva no banco com sucesso.</div>`;
+
+      await renderHistory();
     }
 
     async function loadPage() {
@@ -779,7 +785,7 @@
         `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Visualização`;
 
       renderProperty();
-      renderHistory();
+      await renderHistory();
 
       if (!document.getElementById("project_area").value) {
         document.getElementById("project_area").value = suggestProjectArea();
