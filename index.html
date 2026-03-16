@@ -1,329 +1,349 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imobia • Plataforma Imobiliária Inteligente</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Plataforma imobiliária inteligente</title>
 
-<script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-window.supabase = createClient(
-"https://bcfjciljugeascgyokxa.supabase.co",
-"sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-)
-</script>
+    window.supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+  </script>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-*{box-sizing:border-box}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1736;
+      color: #fff;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-}
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-.wrap{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:10px;
-margin-bottom:20px;
-}
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+    }
 
-.logo{
-font-size:24px;
-font-weight:bold;
-}
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-.menu{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
+    .card {
+      background: #1f2b44;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
 
-button{
-padding:10px 14px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-weight:bold;
-}
+    .hero-title {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin: 0 0 16px 0;
+    }
 
-.primary{
-background:#22c55e;
-color:black;
-}
+    .hero-text {
+      font-size: 16px;
+      color: #e2e8f0;
+      line-height: 1.4;
+      margin: 0;
+    }
 
-.ghost{
-background:#334155;
-color:white;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-margin-bottom:15px;
-}
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
 
-input,select{
-width:100%;
-padding:10px;
-border-radius:6px;
-border:none;
-margin-top:6px;
-margin-bottom:10px;
-}
+    .property-card {
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 14px;
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:12px;
-}
+    .property-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
 
-.item{
-background:#0b1220;
-padding:12px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,.06);
-}
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.4;
+    }
 
-.badge{
-background:#22c55e;
-padding:4px 8px;
-border-radius:20px;
-font-size:12px;
-color:black;
-}
+    .badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      color: #000;
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-</style>
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      background: #fff;
+      color: #111827;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button,
+    a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: #000;
+    }
+
+    .ghost {
+      background: #334155;
+      color: #fff;
+    }
+
+    .outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.16);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .empty-box {
+      background: #0b1220;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 24px;
+      }
+
+      .brand {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="wrap">
-
-<header>
-
-<div class="logo">Imobia</div>
-
-<div class="menu">
-
-<button class="ghost" onclick="scrollToSection('buscar')">Buscar</button>
-<button class="ghost" onclick="scrollToSection('anunciar')">Anunciar imóvel</button>
-<button class="ghost" onclick="scrollToSection('ia')">Imobia AI</button>
-<button class="primary" onclick="openLogin()">Entrar</button>
-
-</div>
-
-</header>
-
-<div class="card">
-
-<h2>Plataforma imobiliária inteligente</h2>
-
-<p>
-A Imobia conecta compradores, corretores e proprietários em uma plataforma com inteligência artificial.
-</p>
-
-</div>
-
-<!-- BUSCA -->
-
-<div id="buscar" class="card">
-
-<h3>Buscar imóveis</h3>
-
-<input id="search_city" placeholder="Cidade">
-
-<select id="search_type">
-<option value="">Tipo</option>
-<option value="house">Casa</option>
-<option value="apartment">Apartamento</option>
-<option value="land">Terreno</option>
-<option value="commercial">Comercial</option>
-</select>
-
-<input id="search_price" placeholder="Preço máximo">
-
-<button class="primary" onclick="searchProperties()">Buscar</button>
-
-</div>
-
-<div class="card">
-
-<h3>Resultados</h3>
-
-<div id="property_list" class="grid"></div>
-
-</div>
-
-<!-- ANUNCIAR -->
-
-<div id="anunciar" class="card">
-
-<h3>Anunciar meu imóvel</h3>
-
-<input id="owner_name" placeholder="Seu nome">
-
-<input id="owner_phone" placeholder="Telefone">
-
-<input id="property_title" placeholder="Título do imóvel">
-
-<select id="property_type">
-<option value="house">Casa</option>
-<option value="apartment">Apartamento</option>
-<option value="land">Terreno</option>
-<option value="commercial">Comercial</option>
-</select>
-
-<select id="property_purpose">
-<option value="sale">Venda</option>
-<option value="rent">Aluguel</option>
-</select>
-
-<input id="property_price" placeholder="Preço">
-
-<input id="property_city" placeholder="Cidade">
-
-<button class="primary" onclick="submitProperty()">Enviar imóvel</button>
-
-</div>
-
-<!-- IA -->
-
-<div id="ia" class="card">
-
-<h3>Falar com Imobia AI</h3>
-
-<input id="ai_question" placeholder="Ex: quero apartamento até 400 mil">
-
-<button class="primary" onclick="askAI()">Perguntar</button>
-
-<div id="ai_response" class="item" style="margin-top:10px">
-
-A Imobia AI pode sugerir imóveis, analisar terrenos e ajudar na busca.
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-function scrollToSection(id){
-document.getElementById(id).scrollIntoView({behavior:"smooth"})
-}
-
-function openLogin(){
-location.href="app.html"
-}
-
-async function searchProperties(){
-
-const city=document.getElementById("search_city").value
-const type=document.getElementById("search_type").value
-
-let query=supabase
-.from("properties")
-.select("*")
-.eq("is_public",true)
-
-if(city) query=query.ilike("city","%"+city+"%")
-if(type) query=query.eq("property_type",type)
-
-const {data,error}=await query
-
-const list=document.getElementById("property_list")
-
-list.innerHTML=""
-
-if(!data || data.length===0){
-list.innerHTML="<div>Nenhum imóvel encontrado</div>"
-return
-}
-
-data.forEach(p=>{
-
-list.innerHTML+=`
-<div class="item">
-
-<b>${p.title}</b><br>
-
-Cidade: ${p.city || "-"}<br>
-
-Preço: ${p.price || "-"}<br>
-
-<span class="badge">${p.property_type}</span>
-
-</div>
-`
-
-})
-
-}
-
-async function submitProperty(){
-
-const name=document.getElementById("owner_name").value
-const phone=document.getElementById("owner_phone").value
-const title=document.getElementById("property_title").value
-const type=document.getElementById("property_type").value
-const purpose=document.getElementById("property_purpose").value
-const price=document.getElementById("property_price").value
-const city=document.getElementById("property_city").value
-
-const {error}=await supabase
-.from("property_submissions")
-.insert({
-title,
-property_type:type,
-purpose,
-price,
-city,
-owner_name:name,
-owner_phone:phone
-})
-
-if(error){
-alert(error.message)
-return
-}
-
-alert("Imóvel enviado para análise")
-
-}
-
-async function askAI(){
-
-const q=document.getElementById("ai_question").value
-
-const box=document.getElementById("ai_response")
-
-box.innerHTML="Pensando..."
-
-setTimeout(()=>{
-
-box.innerHTML="A Imobia AI analisará sua busca e sugerirá imóveis compatíveis."
-
-},1000)
-
-}
-
-searchProperties()
-
-</script>
-
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">Imobia</div>
+
+      <div class="nav-actions">
+        <button class="ghost" onclick="scrollToSection('buscar')">Buscar</button>
+        <button class="ghost" onclick="location.href='anunciar.html'">Anunciar imóvel</button>
+        <button class="ghost" onclick="location.href='imobia-ai.html'">Imobia AI</button>
+        <button class="primary" onclick="location.href='app.html'">Entrar</button>
+        <button class="outline" onclick="location.href='app.html'">Criar conta</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1 class="hero-title">Plataforma imobiliária inteligente</h1>
+      <p class="hero-text">
+        A Imobia conecta compradores, corretores e proprietários em uma plataforma com inteligência artificial.
+      </p>
+    </div>
+
+    <div id="buscar" class="card">
+      <h2 style="margin-top:0;">Buscar imóveis</h2>
+
+      <input id="search_city" placeholder="Cidade" />
+
+      <select id="search_type">
+        <option value="">Tipo</option>
+        <option value="house">Casa</option>
+        <option value="apartment">Apartamento</option>
+        <option value="land">Terreno</option>
+        <option value="commercial">Comercial</option>
+      </select>
+
+      <input id="search_price" type="number" placeholder="Preço máximo" />
+
+      <button class="primary" onclick="searchProperties()">Buscar</button>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Resultados</h2>
+      <div id="property_list" class="results-grid">
+        <div class="empty-box">Carregando imóveis...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function formatMoney(value) {
+      if (value === null || value === undefined || value === "") return "-";
+      return Number(value).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function propertyTypeLabel(type) {
+      if (type === "house") return "Casa";
+      if (type === "apartment") return "Apartamento";
+      if (type === "land") return "Terreno";
+      if (type === "commercial") return "Comercial";
+      return type || "-";
+    }
+
+    function purposeLabel(purpose) {
+      if (purpose === "sale") return "Venda";
+      if (purpose === "rent") return "Aluguel";
+      return purpose || "-";
+    }
+
+    function renderProperties(data) {
+      const list = document.getElementById("property_list");
+
+      if (!data || !data.length) {
+        list.innerHTML = `<div class="empty-box">Nenhum imóvel encontrado.</div>`;
+        return;
+      }
+
+      list.innerHTML = data.map(p => `
+        <div class="property-card">
+          <div class="property-title">${p.title || "Imóvel"}</div>
+          <div class="muted">
+            ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
+            ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
+            Preço: ${formatMoney(p.price)}<br>
+            Área: ${p.area_m2 || "-"} m²
+          </div>
+
+          <span class="badge">${p.status || "available"}</span>
+
+          <div class="row" style="margin-top:12px;">
+            <a class="btn ghost" href="imovel.html?id=${encodeURIComponent(p.id)}">Ver imóvel</a>
+            <button class="primary" onclick="location.href='app.html'">Tenho interesse</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function searchProperties() {
+      const city = document.getElementById("search_city").value.trim();
+      const type = document.getElementById("search_type").value;
+      const price = document.getElementById("search_price").value.trim();
+
+      let query = supabase
+        .from("properties")
+        .select("*")
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+
+      if (city) {
+        query = query.ilike("city", `%${city}%`);
+      }
+
+      if (type) {
+        query = query.eq("property_type", type);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        document.getElementById("property_list").innerHTML =
+          `<div class="empty-box">${error.message}</div>`;
+        return;
+      }
+
+      let filtered = data || [];
+
+      if (price) {
+        const maxPrice = Number(price);
+        filtered = filtered.filter(item => Number(item.price || 0) <= maxPrice);
+      }
+
+      renderProperties(filtered);
+    }
+
+    searchProperties();
+  </script>
 </body>
 </html>
