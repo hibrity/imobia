@@ -19,90 +19,181 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0b1736;
-      color: #fff;
+      background: #0f172a;
+      color: #ffffff;
     }
 
     .wrap {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 18px;
     }
 
     .topbar {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .brand {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: .2px;
     }
 
-    .nav-actions {
+    .brand-sub {
+      color: #cbd5e1;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .top-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .card {
-      background: #1f2b44;
-      border-radius: 20px;
-      padding: 24px;
+    .hero {
+      background: linear-gradient(135deg, #1e293b 0%, #0b1220 100%);
+      border-radius: 24px;
+      padding: 26px;
       margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
     }
 
-    .hero-title {
-      font-size: 28px;
-      font-weight: 700;
-      line-height: 1.15;
-      margin: 0 0 16px 0;
-    }
-
-    .hero-text {
-      font-size: 16px;
-      color: #e2e8f0;
-      line-height: 1.4;
-      margin: 0;
-    }
-
-    .grid {
+    .hero-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .hero-side {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .hero-side-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .hero-side-text {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .section-card {
+      background: #1e293b;
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.16);
+    }
+
+    .section-title {
+      margin: 0 0 14px 0;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .section-subtitle {
+      margin: -4px 0 16px 0;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .quick-item {
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+      color: #fff;
+      display: block;
+    }
+
+    .quick-item-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .quick-item-text {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
     }
 
     .results-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
       gap: 14px;
     }
 
     .property-card {
       background: #0b1220;
       border: 1px solid rgba(255,255,255,.06);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
     }
 
     .property-title {
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 6px;
     }
 
     .muted {
       color: #cbd5e1;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .badge {
@@ -124,10 +215,8 @@
       outline: none;
       border-radius: 12px;
       padding: 14px 16px;
-      margin-top: 8px;
-      margin-bottom: 10px;
       font-size: 16px;
-      background: #fff;
+      background: #ffffff;
       color: #111827;
     }
 
@@ -146,8 +235,8 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       text-decoration: none;
     }
 
@@ -164,7 +253,7 @@
     .outline {
       background: transparent;
       color: #fff;
-      border: 1px solid rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
     }
 
     .row {
@@ -180,23 +269,64 @@
 
     .empty-box {
       background: #0b1220;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 14px;
       border: 1px solid rgba(255,255,255,.06);
       color: #cbd5e1;
     }
 
-    @media (max-width: 900px) {
-      .grid {
+    .footer-note {
+      color: #94a3b8;
+      font-size: 13px;
+      text-align: center;
+      padding: 6px 0 18px 0;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid {
         grid-template-columns: 1fr;
       }
 
-      .hero-title {
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .search-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
         font-size: 24px;
       }
 
-      .brand {
-        font-size: 26px;
+      .top-actions {
+        width: 100%;
+      }
+
+      .top-actions a {
+        flex: 1 1 calc(50% - 10px);
+      }
+
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .search-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 22px;
+      }
+
+      .hero {
+        padding: 20px;
       }
     }
   </style>
@@ -204,58 +334,121 @@
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="brand">Imobia</div>
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="brand-sub">Plataforma imobiliária inteligente</div>
+      </div>
 
-      <div class="nav-actions">
-        <button class="ghost" onclick="scrollToSection('buscar')">Buscar</button>
-        <button class="ghost" onclick="location.href='anunciar.html'">Anunciar imóvel</button>
-        <button class="ghost" onclick="location.href='imobia-ai.html'">Imobia AI</button>
-        <button class="primary" onclick="location.href='app.html'">Entrar</button>
-        <button class="outline" onclick="location.href='app.html'">Criar conta</button>
+      <div class="top-actions">
+        <a class="btn ghost" href="#buscar">Buscar imóveis</a>
+        <a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
+        <a class="btn primary" href="./app.html">Entrar</a>
+        <a class="btn outline" href="./app.html">Criar conta</a>
       </div>
     </div>
 
-    <div class="card">
-      <h1 class="hero-title">Plataforma imobiliária inteligente</h1>
-      <p class="hero-text">
-        A Imobia conecta compradores, corretores e proprietários em uma plataforma com inteligência artificial.
-      </p>
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1>Encontre, anuncie e gerencie imóveis em um só lugar</h1>
+          <p>
+            A Imobia conecta imobiliárias, corretores, compradores e proprietários em uma experiência mais simples,
+            com busca pública, captação de imóveis e ferramentas inteligentes.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#buscar">Começar busca</a>
+            <a class="btn ghost" href="./imobia-ai.html">Falar com Imobia AI</a>
+            <a class="btn outline" href="./anunciar.html">Quero anunciar</a>
+          </div>
+        </div>
+
+        <div class="hero-side">
+          <div class="hero-side-title">Acesso rápido</div>
+          <div class="hero-side-text">
+            Use a Imobia para buscar imóveis, anunciar um imóvel, falar com a IA ou entrar na área da imobiliária.
+          </div>
+
+          <div class="row" style="margin-top:14px;">
+            <a class="btn ghost" href="./app.html">Área interna</a>
+            <a class="btn ghost" href="./cliente-home.html">Área do cliente</a>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="buscar" class="card">
-      <h2 style="margin-top:0;">Buscar imóveis</h2>
+    <div class="section-card">
+      <h2 class="section-title">O que você quer fazer?</h2>
+      <div class="section-subtitle">Escolha o caminho principal sem precisar adivinhar para onde ir.</div>
 
-      <input id="search_city" placeholder="Cidade" />
+      <div class="quick-grid">
+        <a class="quick-item" href="#buscar">
+          <div class="quick-item-title">Buscar imóveis</div>
+          <div class="quick-item-text">Veja casas, apartamentos, terrenos e imóveis comerciais disponíveis.</div>
+        </a>
 
-      <select id="search_type">
-        <option value="">Tipo</option>
-        <option value="house">Casa</option>
-        <option value="apartment">Apartamento</option>
-        <option value="land">Terreno</option>
-        <option value="commercial">Comercial</option>
-      </select>
+        <a class="quick-item" href="./anunciar.html">
+          <div class="quick-item-title">Anunciar imóvel</div>
+          <div class="quick-item-text">Envie seu imóvel para análise e captação pela imobiliária.</div>
+        </a>
 
-      <input id="search_price" type="number" placeholder="Preço máximo" />
+        <a class="quick-item" href="./imobia-ai.html">
+          <div class="quick-item-title">Falar com IA</div>
+          <div class="quick-item-text">Receba sugestões de imóveis, investimento e próximos passos.</div>
+        </a>
 
-      <button class="primary" onclick="searchProperties()">Buscar</button>
+        <a class="quick-item" href="./app.html">
+          <div class="quick-item-title">Entrar na plataforma</div>
+          <div class="quick-item-text">Acesse sua conta, crie sua imobiliária e use o sistema interno.</div>
+        </a>
+      </div>
     </div>
 
-    <div class="card">
-      <h2 style="margin-top:0;">Resultados</h2>
+    <div id="buscar" class="section-card">
+      <h2 class="section-title">Buscar imóveis</h2>
+      <div class="section-subtitle">Filtre rapidamente por cidade, tipo e faixa de preço.</div>
+
+      <div class="search-grid">
+        <input id="search_city" placeholder="Cidade" />
+
+        <select id="search_type">
+          <option value="">Tipo</option>
+          <option value="house">Casa</option>
+          <option value="apartment">Apartamento</option>
+          <option value="land">Terreno</option>
+          <option value="commercial">Comercial</option>
+        </select>
+
+        <select id="search_purpose">
+          <option value="">Venda ou aluguel</option>
+          <option value="sale">Venda</option>
+          <option value="rent">Aluguel</option>
+        </select>
+
+        <input id="search_price" type="number" placeholder="Preço máximo" />
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <button class="primary" onclick="searchProperties()">Buscar</button>
+        <button class="ghost" onclick="resetSearch()">Limpar filtros</button>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h2 class="section-title">Imóveis encontrados</h2>
+      <div class="section-subtitle">Abra o imóvel para ver detalhes e continuar o atendimento.</div>
+
       <div id="property_list" class="results-grid">
         <div class="empty-box">Carregando imóveis...</div>
       </div>
     </div>
+
+    <div class="footer-note">
+      Imobia • Plataforma imobiliária inteligente
+    </div>
   </div>
 
   <script>
-    function scrollToSection(id) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-
     function formatMoney(value) {
       if (value === null || value === undefined || value === "") return "-";
       return Number(value).toLocaleString("pt-BR", {
@@ -278,6 +471,14 @@
       return purpose || "-";
     }
 
+    function statusLabel(status) {
+      if (status === "available") return "Disponível";
+      if (status === "reserved") return "Reservado";
+      if (status === "sold") return "Vendido";
+      if (status === "rented") return "Alugado";
+      return status || "Disponível";
+    }
+
     function renderProperties(data) {
       const list = document.getElementById("property_list");
 
@@ -289,6 +490,7 @@
       list.innerHTML = data.map(p => `
         <div class="property-card">
           <div class="property-title">${p.title || "Imóvel"}</div>
+
           <div class="muted">
             ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
             ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
@@ -296,11 +498,11 @@
             Área: ${p.area_m2 || "-"} m²
           </div>
 
-          <span class="badge">${p.status || "available"}</span>
+          <span class="badge">${statusLabel(p.status)}</span>
 
           <div class="row" style="margin-top:12px;">
-            <a class="btn ghost" href="imovel.html?id=${encodeURIComponent(p.id)}">Ver imóvel</a>
-            <button class="primary" onclick="location.href='app.html'">Tenho interesse</button>
+            <a class="btn ghost" href="./imovel.html?id=${encodeURIComponent(p.id)}">Ver imóvel</a>
+            <a class="btn primary" href="./app.html">Tenho interesse</a>
           </div>
         </div>
       `).join("");
@@ -309,6 +511,7 @@
     async function searchProperties() {
       const city = document.getElementById("search_city").value.trim();
       const type = document.getElementById("search_type").value;
+      const purpose = document.getElementById("search_purpose").value;
       const price = document.getElementById("search_price").value.trim();
 
       let query = supabase
@@ -323,6 +526,10 @@
 
       if (type) {
         query = query.eq("property_type", type);
+      }
+
+      if (purpose) {
+        query = query.eq("purpose", purpose);
       }
 
       const { data, error } = await query;
@@ -341,6 +548,14 @@
       }
 
       renderProperties(filtered);
+    }
+
+    function resetSearch() {
+      document.getElementById("search_city").value = "";
+      document.getElementById("search_type").value = "";
+      document.getElementById("search_purpose").value = "";
+      document.getElementById("search_price").value = "";
+      searchProperties();
     }
 
     searchProperties();
