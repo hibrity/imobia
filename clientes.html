@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Clientes</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando clientes...</div>
+      </div>
+
+      <div class="row" style="max-width:460px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="create_block" class="card hidden">
+      <h3 style="margin-top:0;">Novo cliente</h3>
+
+      <input id="full_name" placeholder="Nome completo" />
+      <div class="row">
+        <input id="phone" placeholder="Telefone" />
+        <input id="email" type="email" placeholder="Email" />
+      </div>
+
+      <div class="row">
+        <select id="interest_type">
+          <option value="">Tipo de interesse</option>
+          <option value="buy">Compra</option>
+          <option value="rent">Aluguel</option>
+          <option value="investment">Investimento</option>
+          <option value="sell">Quer vender imóvel</option>
+          <option value="announce">Quer anunciar imóvel</option>
+        </select>
+
+        <select id="assigned_broker_user_id"></select>
+      </div>
+
+      <textarea id="notes" placeholder="Observações"></textarea>
+
+      <button class="primary" onclick="createClient()">Salvar cliente</button>
+      <div id="create_result"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Filtros</h3>
+
+      <div class="row">
+        <input id="filter_name" placeholder="Nome" />
+        <input id="filter_phone" placeholder="Telefone" />
+        <select id="filter_interest">
+          <option value="">Todos os interesses</option>
+          <option value="buy">Compra</option>
+          <option value="rent">Aluguel</option>
+          <option value="investment">Investimento</option>
+          <option value="sell">Quer vender imóvel</option>
+          <option value="announce">Quer anunciar imóvel</option>
+        </select>
+      </div>
+
+      <button class="ghost" onclick="loadClients()">Aplicar filtros</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Lista de clientes</h3>
+      <div id="clients_list">Carregando...</div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+    let brokers = [];
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data;
+    }
+
+    async function loadBrokers() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*")
+        .eq("company_id", currentProfile.company_id)
+        .eq("role", "broker")
+        .eq("active", true)
+        .order("full_name", { ascending: true });
+
+      brokers = data || [];
+      renderBrokerSelect();
+    }
+
+    function renderBrokerSelect() {
+      const select = document.getElementById("assigned_broker_user_id");
+
+      if (!select) return;
+
+      const defaultOption = currentProfile.role === "broker"
+        ? `<option value="${currentUser.id}">Eu mesmo</option>`
+        : `<option value="">Sem corretor</option>`;
+
+      const brokerOptions = brokers.map(b => `
+        <option value="${b.user_id}">
+          ${b.full_name || b.user_id}
+        </option>
+      `).join("");
+
+      select.innerHTML = defaultOption + brokerOptions;
+
+      if (currentProfile.role === "broker") {
+        select.value = currentUser.id;
+      }
+    }
+
+    function canManageClients() {
+      return ["admin", "broker"].includes(currentProfile?.role);
+    }
+
+    function isAdmin() {
+      return currentProfile?.role === "admin";
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function interestLabel(v) {
+      if (v === "buy") return "Compra";
+      if (v === "rent") return "Aluguel";
+      if (v === "investment") return "Investimento";
+      if (v === "sell") return "Quer vender imóvel";
+      if (v === "announce") return "Quer anunciar imóvel";
+      return v || "-";
+    }
+
+    function getBrokerNameByUserId(userId) {
+      const broker = brokers.find(b => b.user_id === userId);
+      return broker?.full_name || broker?.user_id || "-";
+    }
+
+    async function createClient() {
+      const box = document.getElementById("create_result");
+
+      const payload = {
+        company_id: currentProfile.company_id,
+        full_name: document.getElementById("full_name").value.trim(),
+        phone: document.getElementById("phone").value.trim() || null,
+        email: document.getElementById("email").value.trim() || null,
+        interest_type: document.getElementById("interest_type").value || null,
+        notes: document.getElementById("notes").value.trim() || null,
+        assigned_broker_user_id: document.getElementById("assigned_broker_user_id").value || null,
+        created_by: currentUser.id
+      };
+
+      if (!payload.full_name) {
+        box.innerHTML = `<div class="item">Informe o nome do cliente.</div>`;
+        return;
+      }
+
+      if (currentProfile.role === "broker") {
+        payload.assigned_broker_user_id = currentUser.id;
+      }
+
+      const { error } = await supabase.from("property_clients").insert(payload);
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      box.innerHTML = `<div class="item">Cliente salvo com sucesso.</div>`;
+      clearCreateForm();
+      await loadClients();
+    }
+
+    function clearCreateForm() {
+      document.getElementById("full_name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("interest_type").value = "";
+      document.getElementById("notes").value = "";
+      if (currentProfile.role !== "broker") {
+        document.getElementById("assigned_broker_user_id").value = "";
+      }
+    }
+
+    async function updateClientField(id, field, value) {
+      if (!canManageClients()) return;
+
+      const payload = {};
+      payload[field] = value || null;
+
+      const { error } = await supabase
+        .from("property_clients")
+        .update(payload)
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadClients();
+    }
+
+    async function saveClientNotes(id) {
+      if (!canManageClients()) return;
+
+      const notes = document.getElementById(`notes_${id}`).value;
+
+      const { error } = await supabase
+        .from("property_clients")
+        .update({ notes: notes || null })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadClients();
+    }
+
+    async function loadClients() {
+      const name = document.getElementById("filter_name").value.trim();
+      const phone = document.getElementById("filter_phone").value.trim();
+      const interest = document.getElementById("filter_interest").value;
+
+      let query = supabase
+        .from("property_clients")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (currentProfile.role === "broker") {
+        query = query.eq("assigned_broker_user_id", currentUser.id);
+      }
+
+      if (currentProfile.role === "client") {
+        query = query.eq("user_id", currentUser.id);
+      }
+
+      if (name) query = query.ilike("full_name", `%${name}%`);
+      if (phone) query = query.ilike("phone", `%${phone}%`);
+      if (interest) query = query.eq("interest_type", interest);
+
+      const { data, error } = await query;
+      const box = document.getElementById("clients_list");
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      if (!data || !data.length) {
+        box.innerHTML = `<div class="item">Nenhum cliente encontrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = data.map(c => {
+        const manageBlock = canManageClients()
+          ? `
+            <div class="row" style="margin-top:10px;">
+              <select onchange="updateClientField('${c.id}','interest_type',this.value)">
+                <option value="" ${!c.interest_type ? "selected" : ""}>Sem interesse definido</option>
+                <option value="buy" ${c.interest_type === "buy" ? "selected" : ""}>Compra</option>
+                <option value="rent" ${c.interest_type === "rent" ? "selected" : ""}>Aluguel</option>
+                <option value="investment" ${c.interest_type === "investment" ? "selected" : ""}>Investimento</option>
+                <option value="sell" ${c.interest_type === "sell" ? "selected" : ""}>Quer vender imóvel</option>
+                <option value="announce" ${c.interest_type === "announce" ? "selected" : ""}>Quer anunciar imóvel</option>
+              </select>
+
+              <select onchange="updateClientField('${c.id}','assigned_broker_user_id',this.value)">
+                <option value="">Sem corretor</option>
+                ${brokers.map(b => `
+                  <option value="${b.user_id}" ${c.assigned_broker_user_id === b.user_id ? "selected" : ""}>
+                    ${b.full_name || b.user_id}
+                  </option>
+                `).join("")}
+              </select>
+            </div>
+
+            <textarea id="notes_${c.id}" placeholder="Observações">${c.notes || ""}</textarea>
+
+            <div class="row">
+              <button class="ghost" onclick="saveClientNotes('${c.id}')">Salvar observações</button>
+            </div>
+          `
+          : "";
+
+        return `
+          <div class="item">
+            <b>${c.full_name}</b><br>
+            Telefone: ${c.phone || "-"}<br>
+            Email: ${c.email || "-"}<br>
+            Interesse: ${interestLabel(c.interest_type)}<br>
+            Corretor: ${getBrokerNameByUserId(c.assigned_broker_user_id)}<br>
+            <span class="badge">${interestLabel(c.interest_type)}</span>
+            ${c.notes ? `<div class="muted" style="margin-top:8px;">${c.notes}</div>` : ""}
+            ${manageBlock}
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)}`;
+
+      if (canManageClients()) {
+        document.getElementById("create_block").classList.remove("hidden");
+      } else {
+        document.getElementById("create_block").classList.add("hidden");
+      }
+
+      await loadBrokers();
+      await loadClients();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.loadClients = loadClients;
+    window.createClient = createClient;
+    window.updateClientField = updateClientField;
+    window.saveClientNotes = saveClientNotes;
+  </script>
+</body>
+</html>
