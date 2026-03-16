@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Imobia • IA Avaliação de Imóvel</title>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+window.supabase = createClient(
+  "https://bcfjciljugeascgyokxa.supabase.co",
+  "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+);
+</script>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0f172a;
+color:white;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.brand{
+font-size:26px;
+font-weight:bold;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:14px;
+margin-bottom:16px;
+}
+
+.row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:8px;
+margin-bottom:10px;
+font-size:14px;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.primary{
+background:#22c55e;
+color:black;
+}
+
+.ghost{
+background:#334155;
+color:white;
+}
+
+.preview{
+background:#0b1220;
+border-radius:10px;
+padding:10px;
+margin-top:10px;
+}
+
+.preview img{
+width:100%;
+border-radius:10px;
+}
+
+.analysis{
+background:#0b1220;
+padding:14px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.badge{
+background:#22c55e;
+color:black;
+padding:4px 8px;
+border-radius:999px;
+font-size:12px;
+display:inline-block;
+margin-top:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="topbar">
+<div class="brand">Imobia IA</div>
+
+<div class="row">
+<a href="index.html"><button class="ghost">Portal</button></a>
+<a href="dashboard.html"><button class="ghost">Dashboard</button></a>
+<a href="imoveis.html"><button class="ghost">Imóveis</button></a>
+<button onclick="logout()" class="ghost">Sair</button>
+</div>
+</div>
+
+<div class="card">
+
+<h3>Analisar imóvel com IA</h3>
+
+<input id="titulo" placeholder="Título do imóvel">
+
+<select id="tipo">
+
+<option value="casa">Casa</option>
+<option value="apartamento">Apartamento</option>
+<option value="terreno">Terreno</option>
+<option value="comercial">Comercial</option>
+
+</select>
+
+<div class="row">
+
+<input id="cidade" placeholder="Cidade">
+
+<input id="bairro" placeholder="Bairro">
+
+</div>
+
+<div class="row">
+
+<input id="area" type="number" placeholder="Área m²">
+
+<input id="quartos" type="number" placeholder="Quartos">
+
+<input id="banheiros" type="number" placeholder="Banheiros">
+
+</div>
+
+<input id="valor" type="number" placeholder="Valor pedido">
+
+<textarea id="descricao" placeholder="Descrição do imóvel"></textarea>
+
+<input type="file" id="foto" accept="image/*">
+
+<button class="primary" onclick="analisar()">Analisar imóvel</button>
+
+</div>
+
+<div class="card">
+
+<h3>Imagem enviada</h3>
+
+<div id="preview" class="preview"></div>
+
+</div>
+
+<div class="card">
+
+<h3>Análise da IA</h3>
+
+<div id="resultado" class="analysis">
+
+Aguardando análise...
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function logout(){
+await supabase.auth.signOut()
+location.href="app.html"
+}
+
+function previewImagem(file){
+
+const reader = new FileReader()
+
+reader.onload = function(e){
+
+document.getElementById("preview").innerHTML =
+`<img src="${e.target.result}">`
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function calcularValorIA(){
+
+const tipo=document.getElementById("tipo").value
+const area=Number(document.getElementById("area").value||0)
+const quartos=Number(document.getElementById("quartos").value||0)
+
+let base=0
+
+if(tipo==="casa") base=3500
+if(tipo==="apartamento") base=4200
+if(tipo==="terreno") base=1500
+if(tipo==="comercial") base=5000
+
+let valor=area*base
+
+valor+=quartos*10000
+
+return valor
+
+}
+
+async function analisar(){
+
+const file=document.getElementById("foto").files[0]
+
+if(file) previewImagem(file)
+
+const valorIA=calcularValorIA()
+
+const valorPedido=Number(document.getElementById("valor").value||0)
+
+let recomendacao=""
+
+if(valorPedido===0){
+
+recomendacao="Valor de mercado estimado."
+
+}
+else{
+
+if(valorPedido>valorIA*1.2){
+
+recomendacao="Imóvel acima do valor de mercado."
+
+}
+else if(valorPedido<valorIA*0.8){
+
+recomendacao="Preço muito abaixo do mercado."
+
+}
+else{
+
+recomendacao="Preço dentro da média de mercado."
+
+}
+
+}
+
+document.getElementById("resultado").innerHTML=`
+
+<b>Estimativa IA:</b><br>
+
+Valor sugerido: <b>R$ ${valorIA.toLocaleString("pt-BR")}</b><br>
+
+Preço anunciado: R$ ${valorPedido.toLocaleString("pt-BR")}<br>
+
+<span class="badge">${recomendacao}</span>
+
+<br><br>
+
+Sugestões IA:
+
+<ul>
+
+<li>Verificar iluminação natural</li>
+
+<li>Melhorar fotos do imóvel</li>
+
+<li>Adicionar tour virtual</li>
+
+<li>Destacar diferenciais no anúncio</li>
+
+</ul>
+
+`
+
+}
+
+</script>
+
+</body>
+</html>
