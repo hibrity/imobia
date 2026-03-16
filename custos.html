@@ -274,7 +274,7 @@
 
           <div class="row">
             <button class="primary" onclick="calculateEstimate()">Calcular estimativa</button>
-            <button class="ghost" onclick="saveEstimateHistory()">Salvar cálculo</button>
+            <button class="ghost" onclick="saveEstimateHistory()">Salvar no banco</button>
           </div>
 
           <div id="estimate_result"></div>
@@ -311,7 +311,7 @@
         </div>
 
         <div class="card">
-          <h3 style="margin-top:0;">Histórico local da estimativa</h3>
+          <h3 style="margin-top:0;">Histórico salvo no banco</h3>
           <div id="history_box">Sem histórico ainda.</div>
         </div>
       </div>
@@ -344,22 +344,6 @@
     function getQueryParam(name) {
       const url = new URL(window.location.href);
       return url.searchParams.get(name);
-    }
-
-    function getHistoryKey() {
-      return `imobia_cost_history_${propertyId || "no_property"}`;
-    }
-
-    function getLocalHistory() {
-      try {
-        return JSON.parse(localStorage.getItem(getHistoryKey()) || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function setLocalHistory(list) {
-      localStorage.setItem(getHistoryKey(), JSON.stringify(list));
     }
 
     async function logout() {
@@ -549,26 +533,27 @@
       };
 
       lastEstimate = {
-        propertyId,
-        propertyTitle: currentProperty.title,
-        projectType,
-        projectLabel: getProjectLabel(projectType),
-        standard,
-        standardLabel: getStandardLabel(standard),
-        area,
+        company_id: currentProfile.company_id,
+        property_id: propertyId,
+        created_by: currentUser.id,
+        project_type: projectType,
+        construction_standard: standard,
         floors,
-        regionFactor,
-        foundationFactor,
-        topographyFactor,
-        notes,
-        minPerM2,
-        avgPerM2,
-        maxPerM2,
-        minTotal,
-        avgTotal,
-        maxTotal,
-        stages,
-        createdAt: new Date().toISOString()
+        project_area: area,
+        cost_per_m2_min: minPerM2,
+        cost_per_m2_avg: avgPerM2,
+        cost_per_m2_max: maxPerM2,
+        total_min: minTotal,
+        total_avg: avgTotal,
+        total_max: maxTotal,
+        notes: notes || null,
+        result_summary: `Projeto ${getProjectLabel(projectType)}, padrão ${getStandardLabel(standard)}, área ${area} m², faixa estimada ${formatMoney(minTotal)} a ${formatMoney(maxTotal)}.`,
+        details: {
+          regionFactor,
+          foundationFactor,
+          topographyFactor,
+          stages
+        }
       };
 
       renderEstimate();
@@ -581,26 +566,26 @@
       statsBox.innerHTML = `
         <div class="stat">
           Mínimo
-          <strong>${formatMoney(lastEstimate.minTotal)}</strong>
+          <strong>${formatMoney(lastEstimate.total_min)}</strong>
         </div>
         <div class="stat">
           Médio
-          <strong>${formatMoney(lastEstimate.avgTotal)}</strong>
+          <strong>${formatMoney(lastEstimate.total_avg)}</strong>
         </div>
         <div class="stat">
           Máximo
-          <strong>${formatMoney(lastEstimate.maxTotal)}</strong>
+          <strong>${formatMoney(lastEstimate.total_max)}</strong>
         </div>
       `;
 
       document.getElementById("analysis_box").innerHTML = `
         <b>Resumo da estimativa</b><br>
-        Projeto: ${lastEstimate.projectLabel}<br>
-        Padrão: ${lastEstimate.standardLabel}<br>
-        Área construída estimada: ${lastEstimate.area} m²<br>
+        Projeto: ${getProjectLabel(lastEstimate.project_type)}<br>
+        Padrão: ${getStandardLabel(lastEstimate.construction_standard)}<br>
+        Área construída estimada: ${lastEstimate.project_area} m²<br>
         Pavimentos: ${lastEstimate.floors}<br>
-        Custo médio por m²: ${formatMoney(lastEstimate.avgPerM2)}<br>
-        Faixa estimada por m²: ${formatMoney(lastEstimate.minPerM2)} a ${formatMoney(lastEstimate.maxPerM2)}<br>
+        Custo médio por m²: ${formatMoney(lastEstimate.cost_per_m2_avg)}<br>
+        Faixa estimada por m²: ${formatMoney(lastEstimate.cost_per_m2_min)} a ${formatMoney(lastEstimate.cost_per_m2_max)}<br>
         ${lastEstimate.notes ? `<br><b>Observações:</b> ${lastEstimate.notes}` : ""}
       `;
 
@@ -619,7 +604,7 @@
         return `
           <div class="item">
             <b>${label}</b><br>
-            Valor estimado: ${formatMoney(lastEstimate.stages[key])}
+            Valor estimado: ${formatMoney(lastEstimate.details.stages[key])}
             <div class="bar">
               <div style="width:${percent}%"></div>
             </div>
@@ -632,42 +617,59 @@
         `<div class="item">Estimativa calculada com sucesso.</div>`;
     }
 
-    function renderHistory() {
+    async function renderHistory() {
       const box = document.getElementById("history_box");
-      const history = getLocalHistory();
 
-      if (!history.length) {
+      const { data, error } = await supabase
+        .from("property_cost_estimates")
+        .select("*")
+        .eq("property_id", propertyId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      if (!data || !data.length) {
         box.innerHTML = "Sem histórico ainda.";
         return;
       }
 
-      box.innerHTML = history.map(h => `
+      box.innerHTML = data.map(h => `
         <div class="item">
-          <b>${h.projectLabel}</b><br>
-          Padrão: ${h.standardLabel}<br>
-          Área: ${h.area} m²<br>
-          Médio: ${formatMoney(h.avgTotal)}<br>
-          Faixa: ${formatMoney(h.minTotal)} a ${formatMoney(h.maxTotal)}<br>
-          Data: ${new Date(h.createdAt).toLocaleString("pt-BR")}
+          <b>${getProjectLabel(h.project_type)}</b><br>
+          Padrão: ${getStandardLabel(h.construction_standard)}<br>
+          Área: ${h.project_area} m²<br>
+          Médio: ${formatMoney(h.total_avg)}<br>
+          Faixa: ${formatMoney(h.total_min)} a ${formatMoney(h.total_max)}<br>
+          Data: ${new Date(h.created_at).toLocaleString("pt-BR")}
           ${h.notes ? `<div class="muted" style="margin-top:8px;">${h.notes}</div>` : ""}
         </div>
       `).join("");
     }
 
-    function saveEstimateHistory() {
+    async function saveEstimateHistory() {
       if (!lastEstimate) {
         document.getElementById("estimate_result").innerHTML =
           `<div class="item">Calcule uma estimativa antes de salvar.</div>`;
         return;
       }
 
-      const history = getLocalHistory();
-      history.unshift(lastEstimate);
-      setLocalHistory(history.slice(0, 20));
-      renderHistory();
+      const { error } = await supabase
+        .from("property_cost_estimates")
+        .insert(lastEstimate);
+
+      if (error) {
+        document.getElementById("estimate_result").innerHTML =
+          `<div class="item">${error.message}</div>`;
+        return;
+      }
 
       document.getElementById("estimate_result").innerHTML =
-        `<div class="item">Estimativa salva no histórico local.</div>`;
+        `<div class="item">Estimativa salva no banco com sucesso.</div>`;
+
+      await renderHistory();
     }
 
     async function loadPage() {
@@ -699,7 +701,7 @@
         `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Estimativa`;
 
       renderProperty();
-      renderHistory();
+      await renderHistory();
 
       if (!document.getElementById("project_area").value) {
         document.getElementById("project_area").value = suggestProjectArea();
