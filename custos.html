@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Estimativa de custo</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-3 {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .stat {
+      background: #0b1220;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar > div {
+      height: 100%;
+      background: #22c55e;
+    }
+
+    @media (max-width: 980px) {
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando estimativa...</div>
+      </div>
+
+      <div class="row" style="max-width:620px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <a class="btn ghost" href="./terrenos.html">Terrenos</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Terreno selecionado</h3>
+          <div id="property_box" class="item">Carregando...</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Parâmetros da estimativa</h3>
+
+          <select id="project_type" onchange="calculateEstimate()">
+            <option value="house_single">Casa térrea</option>
+            <option value="house_two_floors">Sobrado</option>
+            <option value="houses_geminated">Casas geminadas</option>
+            <option value="small_building">Prédio pequeno</option>
+            <option value="commercial_store">Loja comercial</option>
+            <option value="warehouse">Galpão</option>
+          </select>
+
+          <div class="row">
+            <select id="construction_standard" onchange="calculateEstimate()">
+              <option value="economic">Padrão econômico</option>
+              <option value="medium" selected>Padrão médio</option>
+              <option value="high">Padrão alto</option>
+              <option value="premium">Padrão premium</option>
+            </select>
+
+            <select id="region_factor" onchange="calculateEstimate()">
+              <option value="0.92">Região econômica</option>
+              <option value="1.00" selected>Região padrão</option>
+              <option value="1.12">Região valorizada</option>
+              <option value="1.25">Região premium</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <input id="project_area" type="number" step="0.01" placeholder="Área construída estimada (m²)" onchange="calculateEstimate()" />
+            <input id="floors" type="number" step="1" min="1" max="20" value="1" onchange="calculateEstimate()" />
+          </div>
+
+          <div class="row">
+            <select id="foundation_complexity" onchange="calculateEstimate()">
+              <option value="0.96">Fundação simples</option>
+              <option value="1.00" selected>Fundação normal</option>
+              <option value="1.10">Fundação complexa</option>
+            </select>
+
+            <select id="topography" onchange="calculateEstimate()">
+              <option value="0.98">Terreno plano</option>
+              <option value="1.05">Aclive/declive leve</option>
+              <option value="1.12">Aclive/declive forte</option>
+            </select>
+          </div>
+
+          <textarea id="estimate_notes" placeholder="Observações da estimativa (piscina, garagem coberta, fachada premium, elevador, etc.)" onchange="calculateEstimate()"></textarea>
+
+          <div class="row">
+            <button class="primary" onclick="calculateEstimate()">Calcular estimativa</button>
+            <button class="ghost" onclick="saveEstimateHistory()">Salvar cálculo</button>
+          </div>
+
+          <div id="estimate_result"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Resultado da estimativa</h3>
+
+          <div class="grid-3" id="summary_stats">
+            <div class="stat">
+              Mínimo
+              <strong>-</strong>
+            </div>
+            <div class="stat">
+              Médio
+              <strong>-</strong>
+            </div>
+            <div class="stat">
+              Máximo
+              <strong>-</strong>
+            </div>
+          </div>
+
+          <div id="analysis_box" class="item" style="margin-top:12px;">
+            Preencha os parâmetros e gere a estimativa.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Distribuição por etapa</h3>
+          <div id="stages_box">Nenhum cálculo ainda.</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Histórico local da estimativa</h3>
+          <div id="history_box">Sem histórico ainda.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+    let currentProperty = null;
+    let propertyId = null;
+    let lastEstimate = null;
+
+    const COST_PER_M2 = {
+      economic: 2200,
+      medium: 3200,
+      high: 4500,
+      premium: 6500
+    };
+
+    const STAGE_PERCENTS = {
+      foundation: 0.12,
+      structure: 0.18,
+      masonry: 0.15,
+      roof: 0.08,
+      installations: 0.12,
+      finishing: 0.35
+    };
+
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function getHistoryKey() {
+      return `imobia_cost_history_${propertyId || "no_property"}`;
+    }
+
+    function getLocalHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(getHistoryKey()) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setLocalHistory(list) {
+      localStorage.setItem(getHistoryKey(), JSON.stringify(list));
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data;
+    }
+
+    async function getProperty() {
+      const { data, error } = await supabase
+        .from("properties")
+        .select("*")
+        .eq("id", propertyId)
+        .eq("property_type", "land")
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data;
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function purposeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function getProjectLabel(value) {
+      if (value === "house_single") return "Casa térrea";
+      if (value === "house_two_floors") return "Sobrado";
+      if (value === "houses_geminated") return "Casas geminadas";
+      if (value === "small_building") return "Prédio pequeno";
+      if (value === "commercial_store") return "Loja comercial";
+      if (value === "warehouse") return "Galpão";
+      return value;
+    }
+
+    function getStandardLabel(value) {
+      if (value === "economic") return "econômico";
+      if (value === "medium") return "médio";
+      if (value === "high") return "alto";
+      if (value === "premium") return "premium";
+      return value;
+    }
+
+    function renderProperty() {
+      const box = document.getElementById("property_box");
+
+      if (!currentProperty) {
+        box.innerHTML = "Terreno não encontrado.";
+        return;
+      }
+
+      box.innerHTML = `
+        <b>${currentProperty.title}</b><br>
+        Finalidade: ${purposeLabel(currentProperty.purpose)}<br>
+        Cidade: ${currentProperty.city || "-"}<br>
+        Bairro: ${currentProperty.neighborhood || "-"}<br>
+        Endereço: ${currentProperty.address || "-"}<br>
+        Área: ${currentProperty.area_m2 || "-"} m²<br>
+        Preço do terreno: ${formatMoney(currentProperty.price)}<br>
+        ${currentProperty.description ? `<div class="muted" style="margin-top:8px;">${currentProperty.description}</div>` : ""}
+      `;
+    }
+
+    function suggestProjectArea() {
+      if (!currentProperty?.area_m2) return 120;
+
+      const lotArea = Number(currentProperty.area_m2 || 0);
+      const projectType = document.getElementById("project_type").value;
+      const floors = Number(document.getElementById("floors").value || 1);
+
+      let ratio = 0.5;
+
+      if (projectType === "house_single") ratio = 0.45;
+      if (projectType === "house_two_floors") ratio = 0.35 * Math.max(1, floors);
+      if (projectType === "houses_geminated") ratio = 0.6;
+      if (projectType === "small_building") ratio = 0.4 * Math.max(2, floors);
+      if (projectType === "commercial_store") ratio = 0.55;
+      if (projectType === "warehouse") ratio = 0.75;
+
+      return Math.max(60, Math.round(lotArea * ratio));
+    }
+
+    function getProjectComplexityFactor(projectType, floors) {
+      if (projectType === "house_single") return 0.98;
+      if (projectType === "house_two_floors") return 1.06 + ((Math.max(1, floors) - 1) * 0.02);
+      if (projectType === "houses_geminated") return 1.08;
+      if (projectType === "small_building") return 1.15 + ((Math.max(2, floors) - 2) * 0.03);
+      if (projectType === "commercial_store") return 1.04;
+      if (projectType === "warehouse") return 0.94;
+      return 1;
+    }
+
+    function getExtraNotesFactor(notes) {
+      const text = String(notes || "").toLowerCase();
+
+      let factor = 1;
+
+      if (text.includes("piscina")) factor += 0.05;
+      if (text.includes("elevador")) factor += 0.07;
+      if (text.includes("premium")) factor += 0.04;
+      if (text.includes("garagem coberta")) factor += 0.02;
+      if (text.includes("fachada")) factor += 0.02;
+      if (text.includes("vidro")) factor += 0.03;
+      if (text.includes("paisagismo")) factor += 0.015;
+
+      return factor;
+    }
+
+    function calculateEstimate() {
+      if (!currentProperty) return;
+
+      const projectType = document.getElementById("project_type").value;
+      const standard = document.getElementById("construction_standard").value;
+      const regionFactor = Number(document.getElementById("region_factor").value || 1);
+      const foundationFactor = Number(document.getElementById("foundation_complexity").value || 1);
+      const topographyFactor = Number(document.getElementById("topography").value || 1);
+      const floors = Math.max(1, Number(document.getElementById("floors").value || 1));
+      const notes = document.getElementById("estimate_notes").value.trim();
+
+      let area = Number(document.getElementById("project_area").value || 0);
+      if (!area) {
+        area = suggestProjectArea();
+        document.getElementById("project_area").value = area;
+      }
+
+      const basePerM2 = COST_PER_M2[standard] || COST_PER_M2.medium;
+      const complexityFactor = getProjectComplexityFactor(projectType, floors);
+      const notesFactor = getExtraNotesFactor(notes);
+
+      const adjustedPerM2 = basePerM2 * regionFactor * foundationFactor * topographyFactor * complexityFactor * notesFactor;
+
+      const minPerM2 = adjustedPerM2 * 0.90;
+      const avgPerM2 = adjustedPerM2;
+      const maxPerM2 = adjustedPerM2 * 1.12;
+
+      const minTotal = minPerM2 * area;
+      const avgTotal = avgPerM2 * area;
+      const maxTotal = maxPerM2 * area;
+
+      const stages = {
+        foundation: avgTotal * STAGE_PERCENTS.foundation,
+        structure: avgTotal * STAGE_PERCENTS.structure,
+        masonry: avgTotal * STAGE_PERCENTS.masonry,
+        roof: avgTotal * STAGE_PERCENTS.roof,
+        installations: avgTotal * STAGE_PERCENTS.installations,
+        finishing: avgTotal * STAGE_PERCENTS.finishing
+      };
+
+      lastEstimate = {
+        propertyId,
+        propertyTitle: currentProperty.title,
+        projectType,
+        projectLabel: getProjectLabel(projectType),
+        standard,
+        standardLabel: getStandardLabel(standard),
+        area,
+        floors,
+        regionFactor,
+        foundationFactor,
+        topographyFactor,
+        notes,
+        minPerM2,
+        avgPerM2,
+        maxPerM2,
+        minTotal,
+        avgTotal,
+        maxTotal,
+        stages,
+        createdAt: new Date().toISOString()
+      };
+
+      renderEstimate();
+    }
+
+    function renderEstimate() {
+      if (!lastEstimate) return;
+
+      const statsBox = document.getElementById("summary_stats");
+      statsBox.innerHTML = `
+        <div class="stat">
+          Mínimo
+          <strong>${formatMoney(lastEstimate.minTotal)}</strong>
+        </div>
+        <div class="stat">
+          Médio
+          <strong>${formatMoney(lastEstimate.avgTotal)}</strong>
+        </div>
+        <div class="stat">
+          Máximo
+          <strong>${formatMoney(lastEstimate.maxTotal)}</strong>
+        </div>
+      `;
+
+      document.getElementById("analysis_box").innerHTML = `
+        <b>Resumo da estimativa</b><br>
+        Projeto: ${lastEstimate.projectLabel}<br>
+        Padrão: ${lastEstimate.standardLabel}<br>
+        Área construída estimada: ${lastEstimate.area} m²<br>
+        Pavimentos: ${lastEstimate.floors}<br>
+        Custo médio por m²: ${formatMoney(lastEstimate.avgPerM2)}<br>
+        Faixa estimada por m²: ${formatMoney(lastEstimate.minPerM2)} a ${formatMoney(lastEstimate.maxPerM2)}<br>
+        ${lastEstimate.notes ? `<br><b>Observações:</b> ${lastEstimate.notes}` : ""}
+      `;
+
+      const stagesBox = document.getElementById("stages_box");
+      const stageList = [
+        ["Fundação", "foundation"],
+        ["Estrutura", "structure"],
+        ["Alvenaria", "masonry"],
+        ["Cobertura", "roof"],
+        ["Instalações", "installations"],
+        ["Acabamento", "finishing"]
+      ];
+
+      stagesBox.innerHTML = stageList.map(([label, key]) => {
+        const percent = Math.round(STAGE_PERCENTS[key] * 100);
+        return `
+          <div class="item">
+            <b>${label}</b><br>
+            Valor estimado: ${formatMoney(lastEstimate.stages[key])}
+            <div class="bar">
+              <div style="width:${percent}%"></div>
+            </div>
+            <div class="muted" style="margin-top:6px;">${percent}% do total médio</div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("estimate_result").innerHTML =
+        `<div class="item">Estimativa calculada com sucesso.</div>`;
+    }
+
+    function renderHistory() {
+      const box = document.getElementById("history_box");
+      const history = getLocalHistory();
+
+      if (!history.length) {
+        box.innerHTML = "Sem histórico ainda.";
+        return;
+      }
+
+      box.innerHTML = history.map(h => `
+        <div class="item">
+          <b>${h.projectLabel}</b><br>
+          Padrão: ${h.standardLabel}<br>
+          Área: ${h.area} m²<br>
+          Médio: ${formatMoney(h.avgTotal)}<br>
+          Faixa: ${formatMoney(h.minTotal)} a ${formatMoney(h.maxTotal)}<br>
+          Data: ${new Date(h.createdAt).toLocaleString("pt-BR")}
+          ${h.notes ? `<div class="muted" style="margin-top:8px;">${h.notes}</div>` : ""}
+        </div>
+      `).join("");
+    }
+
+    function saveEstimateHistory() {
+      if (!lastEstimate) {
+        document.getElementById("estimate_result").innerHTML =
+          `<div class="item">Calcule uma estimativa antes de salvar.</div>`;
+        return;
+      }
+
+      const history = getLocalHistory();
+      history.unshift(lastEstimate);
+      setLocalHistory(history.slice(0, 20));
+      renderHistory();
+
+      document.getElementById("estimate_result").innerHTML =
+        `<div class="item">Estimativa salva no histórico local.</div>`;
+    }
+
+    async function loadPage() {
+      propertyId = getQueryParam("property_id");
+
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      if (!propertyId) {
+        document.getElementById("property_box").innerHTML = "Nenhum terreno informado.";
+        return;
+      }
+
+      currentProperty = await getProperty();
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Estimativa`;
+
+      renderProperty();
+      renderHistory();
+
+      if (!document.getElementById("project_area").value) {
+        document.getElementById("project_area").value = suggestProjectArea();
+      }
+
+      calculateEstimate();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.calculateEstimate = calculateEstimate;
+    window.saveEstimateHistory = saveEstimateHistory;
+  </script>
+</body>
+</html>
