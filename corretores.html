@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Corretores</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando equipe...</div>
+      </div>
+
+      <div class="row" style="max-width:520px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <a class="btn ghost" href="./clientes.html">Clientes</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="admin_only_warning" class="card hidden">
+      <h3 style="margin-top:0;">Acesso restrito</h3>
+      <div class="item">
+        Apenas o administrador da imobiliária pode gerenciar corretores e equipe.
+      </div>
+    </div>
+
+    <div id="admin_content" class="hidden">
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h3 style="margin-top:0;">Novo membro da equipe</h3>
+
+            <input id="full_name" placeholder="Nome completo" />
+            <div class="row">
+              <input id="phone" placeholder="Telefone" />
+              <input id="user_id" placeholder="User ID do Supabase" />
+            </div>
+
+            <select id="role">
+              <option value="broker">Corretor</option>
+              <option value="client">Cliente</option>
+              <option value="owner">Proprietário</option>
+            </select>
+
+            <button class="primary" onclick="createTeamMember()">Salvar membro</button>
+            <div id="create_result"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h3 style="margin-top:0;">Instrução importante</h3>
+            <div class="item">
+              Para vincular alguém à imobiliária, você precisa do <b>User ID</b> desse usuário no Supabase Auth.
+              <br><br>
+              Fluxo recomendado:
+              <br>
+              1. a pessoa cria conta em <b>app.html</b>
+              <br>
+              2. você obtém o User ID dela
+              <br>
+              3. cadastra aqui com o papel correto
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Equipe cadastrada</h3>
+        <div id="team_list">Carregando...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data;
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function isAdmin() {
+      return currentProfile?.role === "admin";
+    }
+
+    async function createTeamMember() {
+      const box = document.getElementById("create_result");
+
+      const payload = {
+        company_id: currentProfile.company_id,
+        user_id: document.getElementById("user_id").value.trim(),
+        full_name: document.getElementById("full_name").value.trim() || null,
+        phone: document.getElementById("phone").value.trim() || null,
+        role: document.getElementById("role").value,
+        active: true,
+        created_by: currentUser.id
+      };
+
+      if (!payload.user_id) {
+        box.innerHTML = `<div class="item">Informe o User ID do usuário.</div>`;
+        return;
+      }
+
+      const { error } = await supabase
+        .from("imobix_users")
+        .insert(payload);
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      box.innerHTML = `<div class="item">Membro da equipe salvo com sucesso.</div>`;
+      clearForm();
+      await loadTeam();
+    }
+
+    function clearForm() {
+      document.getElementById("full_name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("user_id").value = "";
+      document.getElementById("role").value = "broker";
+    }
+
+    async function updateMemberRole(id, role) {
+      const { error } = await supabase
+        .from("imobix_users")
+        .update({ role })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadTeam();
+    }
+
+    async function updateMemberActive(id, active) {
+      const { error } = await supabase
+        .from("imobix_users")
+        .update({ active })
+        .eq("id", id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadTeam();
+    }
+
+    async function loadTeam() {
+      const box = document.getElementById("team_list");
+
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*")
+        .eq("company_id", currentProfile.company_id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      if (!data || !data.length) {
+        box.innerHTML = `<div class="item">Nenhum membro cadastrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = data.map(member => {
+        const isCurrentAdmin = member.user_id === currentUser.id && member.role === "admin";
+
+        return `
+          <div class="item">
+            <b>${member.full_name || "Sem nome"}</b><br>
+            User ID: ${member.user_id}<br>
+            Telefone: ${member.phone || "-"}<br>
+            Perfil atual: ${roleLabel(member.role)}<br>
+            <span class="badge">${member.active ? "Ativo" : "Inativo"}</span>
+
+            <div class="row" style="margin-top:10px;">
+              <select onchange="updateMemberRole('${member.id}', this.value)" ${isCurrentAdmin ? "disabled" : ""}>
+                <option value="admin" ${member.role === "admin" ? "selected" : ""}>Admin</option>
+                <option value="broker" ${member.role === "broker" ? "selected" : ""}>Corretor</option>
+                <option value="client" ${member.role === "client" ? "selected" : ""}>Cliente</option>
+                <option value="owner" ${member.role === "owner" ? "selected" : ""}>Proprietário</option>
+              </select>
+
+              <select onchange="updateMemberActive('${member.id}', this.value === 'true')" ${isCurrentAdmin ? "disabled" : ""}>
+                <option value="true" ${member.active ? "selected" : ""}>Ativo</option>
+                <option value="false" ${!member.active ? "selected" : ""}>Inativo</option>
+              </select>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Equipe`;
+
+      if (!isAdmin()) {
+        document.getElementById("admin_only_warning").classList.remove("hidden");
+        document.getElementById("admin_content").classList.add("hidden");
+        return;
+      }
+
+      document.getElementById("admin_only_warning").classList.add("hidden");
+      document.getElementById("admin_content").classList.remove("hidden");
+
+      await loadTeam();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.createTeamMember = createTeamMember;
+    window.updateMemberRole = updateMemberRole;
+    window.updateMemberActive = updateMemberActive;
+  </script>
+</body>
+</html>
