@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Assistente IA</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.1fr .9fr;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .chat-box {
+      height: 520px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .msg {
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+      max-width: 88%;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .msg.user {
+      background: #22c55e;
+      color: black;
+      margin-left: auto;
+    }
+
+    .msg.ai {
+      background: #0b1220;
+      color: white;
+      margin-right: auto;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .suggestion-chip {
+      display: inline-flex;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #334155;
+      color: white;
+      cursor: pointer;
+      margin: 6px 6px 0 0;
+      font-size: 13px;
+    }
+
+    .property-card {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+
+      .chat-box {
+        height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Assistente imobiliário inteligente</div>
+      </div>
+
+      <div class="row" style="max-width:620px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <a class="btn ghost" href="./cliente-home.html">Área do cliente</a>
+        <button class="ghost" onclick="reloadAssistant()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Imobia AI</h3>
+
+          <div id="quick_suggestions">
+            <span class="suggestion-chip" onclick="useSuggestion('Quero comprar um apartamento')">Quero comprar um apartamento</span>
+            <span class="suggestion-chip" onclick="useSuggestion('Procuro imóvel para aluguel')">Procuro imóvel para aluguel</span>
+            <span class="suggestion-chip" onclick="useSuggestion('Quero um terreno para investir')">Quero um terreno para investir</span>
+            <span class="suggestion-chip" onclick="useSuggestion('Busco imóvel comercial')">Busco imóvel comercial</span>
+            <span class="suggestion-chip" onclick="useSuggestion('Quero anunciar meu imóvel')">Quero anunciar meu imóvel</span>
+          </div>
+
+          <div id="chat_box" class="chat-box"></div>
+
+          <textarea id="user_message" placeholder="Digite sua mensagem para a Imobia AI"></textarea>
+
+          <div class="row">
+            <button class="primary" onclick="sendMessage()">Enviar</button>
+            <button class="ghost" onclick="clearChat()">Limpar conversa</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Perfil detectado</h3>
+          <div id="profile_box" class="item">Carregando...</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Imóveis sugeridos</h3>
+          <div id="suggested_properties">Nenhuma sugestão ainda.</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Ações da IA</h3>
+          <div class="row">
+            <button class="ghost" onclick="useSuggestion('Quero agendar visita')">Agendar visita</button>
+            <button class="ghost" onclick="useSuggestion('Quero falar com corretor')">Falar com corretor</button>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <button class="warning" onclick="useSuggestion('Quero estimar custo de construção')">Estimar custo</button>
+            <button class="warning" onclick="useSuggestion('Quero visualizar construção em terreno')">Visualizar construção</button>
+          </div>
+          <div id="lead_result"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Leitura da conversa</h3>
+          <div id="conversation_summary" class="item">
+            Ainda sem contexto suficiente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+    let currentClientRecord = null;
+    let currentCompanyId = null;
+    let publicProperties = [];
+    let currentSuggestions = [];
+
+    function getChatKey() {
+      return `imobia_ai_chat_${currentUser?.id || "guest"}`;
+    }
+
+    function getChatHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(getChatKey()) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setChatHistory(list) {
+      localStorage.setItem(getChatKey(), JSON.stringify(list));
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    async function getFallbackCompany() {
+      const { data } = await supabase
+        .from("imobix_companies")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    async function ensureClientRecord() {
+      if (!currentCompanyId) return;
+
+      const { data } = await supabase
+        .from("property_clients")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("user_id", currentUser.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        currentClientRecord = data;
+        return;
+      }
+
+      const { data: inserted } = await supabase
+        .from("property_clients")
+        .insert({
+          company_id: currentCompanyId,
+          user_id: currentUser.id,
+          full_name: currentProfile?.full_name || currentUser.email,
+          phone: currentProfile?.phone || null,
+          email: currentUser.email || null,
+          interest_type: "buy",
+          notes: "Criado automaticamente pela Imobia AI.",
+          created_by: currentUser.id
+        })
+        .select("*")
+        .single();
+
+      currentClientRecord = inserted || null;
+    }
+
+    async function loadPublicProperties() {
+      if (!currentCompanyId) return;
+
+      const { data } = await supabase
+        .from("properties")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+
+      publicProperties = data || [];
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "Visitante";
+    }
+
+    function propertyTypeLabel(v) {
+      if (v === "house") return "Casa";
+      if (v === "apartment") return "Apartamento";
+      if (v === "land") return "Terreno";
+      if (v === "commercial") return "Comercial";
+      return v || "-";
+    }
+
+    function purposeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function renderProfile() {
+      document.getElementById("profile_box").innerHTML = `
+        <b>${currentProfile?.full_name || currentUser.email}</b><br>
+        Perfil: ${roleLabel(currentProfile?.role)}<br>
+        Email: ${currentUser.email || "-"}<br>
+        Imobiliária: ${currentProfile?.imobix_companies?.name || "Imobia"}<br>
+        <span class="badge">Assistente ativo</span>
+      `;
+    }
+
+    function renderChat() {
+      const history = getChatHistory();
+      const box = document.getElementById("chat_box");
+
+      if (!history.length) {
+        box.innerHTML = `
+          <div class="msg ai">
+            Olá! Eu sou a Imobia AI.<br>
+            Posso te ajudar a encontrar imóveis, terrenos, oportunidades de investimento, aluguel, compra ou anunciar seu imóvel.
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = history.map(entry => `
+        <div class="msg ${entry.role}">
+          ${entry.text}
+        </div>
+      `).join("");
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function pushChat(role, text) {
+      const history = getChatHistory();
+      history.push({ role, text, createdAt: new Date().toISOString() });
+      setChatHistory(history);
+      renderChat();
+      renderConversationSummary();
+    }
+
+    function clearChat() {
+      setChatHistory([]);
+      currentSuggestions = [];
+      renderChat();
+      renderSuggestedProperties();
+      renderConversationSummary();
+      document.getElementById("lead_result").innerHTML = "";
+    }
+
+    function useSuggestion(text) {
+      document.getElementById("user_message").value = text;
+      sendMessage();
+    }
+
+    function extractPriceLimit(text) {
+      const normalized = String(text || "").toLowerCase().replace(/\./g, "");
+      const matches = normalized.match(/\d+/g);
+      if (!matches || !matches.length) return null;
+
+      const max = Math.max(...matches.map(n => Number(n)).filter(n => !Number.isNaN(n)));
+      return max || null;
+    }
+
+    function detectPurpose(text) {
+      const t = text.toLowerCase();
+      if (t.includes("alug")) return "rent";
+      if (t.includes("compr") || t.includes("venda")) return "sale";
+      return null;
+    }
+
+    function detectType(text) {
+      const t = text.toLowerCase();
+      if (t.includes("apart")) return "apartment";
+      if (t.includes("casa")) return "house";
+      if (t.includes("terreno") || t.includes("lote")) return "land";
+      if (t.includes("comercial") || t.includes("loja") || t.includes("galp")) return "commercial";
+      return null;
+    }
+
+    function detectCity(text) {
+      const t = text.toLowerCase();
+      const cities = [...new Set(publicProperties.map(p => p.city).filter(Boolean))];
+
+      for (const city of cities) {
+        if (t.includes(String(city).toLowerCase())) return city;
+      }
+
+      return null;
+    }
+
+    function searchMatchingProperties(criteria) {
+      let list = [...publicProperties];
+
+      if (criteria.purpose) {
+        list = list.filter(p => p.purpose === criteria.purpose);
+      }
+
+      if (criteria.type) {
+        list = list.filter(p => p.property_type === criteria.type);
+      }
+
+      if (criteria.city) {
+        list = list.filter(p => String(p.city || "").toLowerCase() === String(criteria.city).toLowerCase());
+      }
+
+      if (criteria.maxPrice) {
+        list = list.filter(p => Number(p.price || 0) <= Number(criteria.maxPrice));
+      }
+
+      return list.slice(0, 6);
+    }
+
+    function renderSuggestedProperties() {
+      const box = document.getElementById("suggested_properties");
+
+      if (!currentSuggestions.length) {
+        box.innerHTML = "Nenhuma sugestão ainda.";
+        return;
+      }
+
+      box.innerHTML = currentSuggestions.map(p => `
+        <div class="property-card">
+          <b>${p.title}</b><br>
+          ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
+          ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
+          Preço: ${formatMoney(p.price)}<br>
+
+          <div class="row" style="margin-top:10px;">
+            <a class="btn ghost" href="./imovel.html?id=${encodeURIComponent(p.id)}">Ver imóvel</a>
+            <button class="primary" onclick="registerInterest('${p.id}','${escapeHtml(p.title)}')">Tenho interesse</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    async function registerInterest(propertyId, propertyTitle) {
+      if (!currentCompanyId || !currentUser) return;
+
+      await ensureClientRecord();
+
+      const { error } = await supabase
+        .from("property_interest")
+        .insert({
+          company_id: currentCompanyId,
+          property_id: propertyId,
+          client_user_id: currentUser.id,
+          message: `Lead gerado pela Imobia AI para o imóvel: ${propertyTitle}`,
+          status: "new"
+        });
+
+      if (error) {
+        document.getElementById("lead_result").innerHTML =
+          `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      document.getElementById("lead_result").innerHTML =
+        `<div class="item">Interesse registrado com sucesso para ${propertyTitle}.</div>`;
+    }
+
+    async function createLeadFromConversation(summaryText) {
+      if (!currentCompanyId || !currentUser || !currentSuggestions.length) return;
+      await ensureClientRecord();
+
+      const mainProperty = currentSuggestions[0];
+
+      await supabase.from("property_interest").insert({
+        company_id: currentCompanyId,
+        property_id: mainProperty.id,
+        client_user_id: currentUser.id,
+        message: `Lead da Imobia AI: ${summaryText}`,
+        status: "new"
+      });
+    }
+
+    function renderConversationSummary() {
+      const history = getChatHistory();
+      const userTexts = history.filter(h => h.role === "user").map(h => h.text).join(" ").toLowerCase();
+
+      if (!userTexts) {
+        document.getElementById("conversation_summary").innerHTML = "Ainda sem contexto suficiente.";
+        return;
+      }
+
+      const purpose = detectPurpose(userTexts);
+      const type = detectType(userTexts);
+      const city = detectCity(userTexts);
+      const maxPrice = extractPriceLimit(userTexts);
+
+      document.getElementById("conversation_summary").innerHTML = `
+        <b>Resumo do interesse</b><br>
+        Finalidade: ${purpose ? purposeLabel(purpose) : "Não identificada"}<br>
+        Tipo: ${type ? propertyTypeLabel(type) : "Não identificado"}<br>
+        Cidade: ${city || "Não identificada"}<br>
+        Faixa máxima citada: ${maxPrice ? formatMoney(maxPrice) : "Não identificada"}
+      `;
+    }
+
+    async function processAI(text) {
+      const lower = text.toLowerCase();
+
+      if (lower.includes("anunciar meu imóvel") || lower.includes("quero anunciar")) {
+        currentSuggestions = [];
+        renderSuggestedProperties();
+        pushChat(
+          "ai",
+          "Perfeito. Para anunciar seu imóvel, você pode usar o formulário da Imobia.\n\nClique em “anunciar imóvel” no portal ou acesse a página anunciar.html para enviar os dados do imóvel para análise da imobiliária."
+        );
+        return;
+      }
+
+      if (lower.includes("estimar custo") || lower.includes("custo de construção")) {
+        currentSuggestions = publicProperties.filter(p => p.property_type === "land").slice(0, 4);
+        renderSuggestedProperties();
+        pushChat(
+          "ai",
+          "Entendi. Para estimar custo de construção, o ideal é usar um terreno.\n\nSeparei alguns terrenos para você. Ao abrir um deles, você pode usar o módulo de estimativa de custo."
+        );
+        return;
+      }
+
+      if (lower.includes("visualizar construção") || lower.includes("construção em terreno")) {
+        currentSuggestions = publicProperties.filter(p => p.property_type === "land").slice(0, 4);
+        renderSuggestedProperties();
+        pushChat(
+          "ai",
+          "Entendi. Para visualização de construção, vou priorizar terrenos disponíveis.\n\nSeparei opções compatíveis para você analisar no módulo de visualização."
+        );
+        return;
+      }
+
+      if (lower.includes("falar com corretor")) {
+        pushChat(
+          "ai",
+          "Posso adiantar a qualificação do seu interesse e gerar um lead para a equipe.\n\nMe diga: compra ou aluguel, cidade, tipo de imóvel e faixa de preço."
+        );
+        return;
+      }
+
+      if (lower.includes("agendar visita")) {
+        pushChat(
+          "ai",
+          "Claro. Primeiro vou sugerir imóveis compatíveis. Depois você pode abrir o imóvel e usar o formulário de agendamento de visita."
+        );
+      }
+
+      const criteria = {
+        purpose: detectPurpose(text),
+        type: detectType(text),
+        city: detectCity(text),
+        maxPrice: extractPriceLimit(text)
+      };
+
+      const matches = searchMatchingProperties(criteria);
+      currentSuggestions = matches;
+      renderSuggestedProperties();
+
+      if (matches.length) {
+        let response = `Encontrei ${matches.length} imóvel(is) que combinam com o que você descreveu.`;
+
+        if (criteria.type) {
+          response += `\nTipo priorizado: ${propertyTypeLabel(criteria.type)}.`;
+        }
+
+        if (criteria.purpose) {
+          response += `\nFinalidade: ${purposeLabel(criteria.purpose)}.`;
+        }
+
+        if (criteria.city) {
+          response += `\nCidade: ${criteria.city}.`;
+        }
+
+        if (criteria.maxPrice) {
+          response += `\nFaixa máxima: ${formatMoney(criteria.maxPrice)}.`;
+        }
+
+        response += `\n\nVeja as sugestões ao lado. Se quiser, também posso refinar por bairro, número de quartos ou investimento.`;
+
+        pushChat("ai", response);
+        await createLeadFromConversation(response);
+        return;
+      }
+
+      if (publicProperties.length) {
+        currentSuggestions = publicProperties.slice(0, 4);
+        renderSuggestedProperties();
+        pushChat(
+          "ai",
+          "Ainda não encontrei uma combinação exata com base na sua mensagem.\n\nSeparei algumas opções gerais da imobiliária. Se quiser, me diga cidade, tipo, compra ou aluguel e faixa de preço."
+        );
+        return;
+      }
+
+      pushChat(
+        "ai",
+        "No momento não encontrei imóveis públicos disponíveis para sugerir. Você pode tentar novamente mais tarde ou falar com a equipe."
+      );
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("user_message");
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      pushChat("user", text);
+      input.value = "";
+
+      await processAI(text);
+    }
+
+    async function reloadAssistant() {
+      await loadPage();
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (currentProfile?.company_id) {
+        currentCompanyId = currentProfile.company_id;
+        document.getElementById("page_subtitle").textContent =
+          `${currentProfile.imobix_companies?.name || "Imobia"} • Assistente imobiliário inteligente`;
+      } else {
+        const fallbackCompany = await getFallbackCompany();
+        currentCompanyId = fallbackCompany?.id || null;
+        document.getElementById("page_subtitle").textContent =
+          `${fallbackCompany?.name || "Imobia"} • Assistente imobiliário inteligente`;
+      }
+
+      await ensureClientRecord();
+      await loadPublicProperties();
+      renderProfile();
+      renderChat();
+      renderSuggestedProperties();
+      renderConversationSummary();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.reloadAssistant = reloadAssistant;
+    window.sendMessage = sendMessage;
+    window.clearChat = clearChat;
+    window.useSuggestion = useSuggestion;
+    window.registerInterest = registerInterest;
+  </script>
+</body>
+</html>
