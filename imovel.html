@@ -1,1 +1,299 @@
-imovel.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Imobia • Detalhes do imóvel</title>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+window.supabase = createClient(
+  "https://SEU_PROJETO.supabase.co",
+  "SUA_ANON_KEY"
+);
+</script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+}
+
+.wrap{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.brand{
+font-size:26px;
+font-weight:bold;
+}
+
+.card{
+background:#1e293b;
+padding:18px;
+border-radius:12px;
+margin-bottom:16px;
+}
+
+.hero{
+width:100%;
+height:380px;
+background:#334155;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+}
+
+button{
+padding:10px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.primary{
+background:#22c55e;
+color:black;
+}
+
+.ghost{
+background:#334155;
+color:white;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:6px;
+margin-bottom:10px;
+}
+
+.badge{
+display:inline-block;
+padding:4px 8px;
+border-radius:999px;
+font-size:12px;
+background:#22c55e;
+color:black;
+margin-top:6px;
+}
+
+@media(max-width:900px){
+.grid{grid-template-columns:1fr}
+.hero{height:260px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<div class="brand">Imobia</div>
+
+<div>
+<button class="ghost" onclick="location.href='index.html'">Portal</button>
+</div>
+</div>
+
+
+<div class="card">
+<div id="hero" class="hero">Carregando imóvel...</div>
+</div>
+
+
+<div class="grid">
+
+<div class="card">
+<h3>Informações</h3>
+
+<div id="info_box">Carregando...</div>
+
+</div>
+
+
+<div class="card">
+<h3>Agendar visita</h3>
+
+<input id="name" placeholder="Seu nome"/>
+
+<input id="phone" placeholder="Telefone"/>
+
+<input id="email" placeholder="Email"/>
+
+<input id="visit_date" type="datetime-local"/>
+
+<textarea id="message" placeholder="Mensagem (opcional)"></textarea>
+
+<button class="primary" onclick="scheduleVisit()">Agendar visita</button>
+
+<div id="visit_result"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let propertyId=null
+let property=null
+
+function getQueryParam(name){
+const url=new URL(window.location.href)
+return url.searchParams.get(name)
+}
+
+function formatMoney(v){
+if(!v)return "-"
+return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})
+}
+
+function purposeLabel(v){
+if(v==="sale")return "Venda"
+if(v==="rent")return "Aluguel"
+return v
+}
+
+async function loadProperty(){
+
+propertyId=getQueryParam("id")
+
+if(!propertyId){
+document.getElementById("hero").innerHTML="Imóvel não encontrado"
+return
+}
+
+const {data,error}=await supabase
+.from("properties")
+.select("*")
+.eq("id",propertyId)
+.single()
+
+if(error||!data){
+document.getElementById("hero").innerHTML="Imóvel não encontrado"
+return
+}
+
+property=data
+
+renderProperty()
+
+}
+
+function renderProperty(){
+
+document.getElementById("hero").innerHTML=`
+<b>${property.title}</b>
+`
+
+document.getElementById("info_box").innerHTML=`
+
+<b>${property.title}</b><br>
+
+Tipo: ${property.property_type}<br>
+
+Finalidade: ${purposeLabel(property.purpose)}<br>
+
+Cidade: ${property.city||"-"}<br>
+
+Bairro: ${property.neighborhood||"-"}<br>
+
+Endereço: ${property.address||"-"}<br>
+
+Área: ${property.area_m2||"-"} m²<br>
+
+Preço: ${formatMoney(property.price)}<br>
+
+<span class="badge">${property.status}</span>
+
+${property.description?`
+<p style="margin-top:10px">
+${property.description}
+</p>
+`:""}
+
+`
+
+}
+
+async function scheduleVisit(){
+
+const name=document.getElementById("name").value
+const phone=document.getElementById("phone").value
+const email=document.getElementById("email").value
+const visit_date=document.getElementById("visit_date").value
+const message=document.getElementById("message").value
+
+if(!name||!phone||!visit_date){
+
+document.getElementById("visit_result").innerHTML=
+"<div class='card'>Preencha nome, telefone e data.</div>"
+
+return
+}
+
+const {error}=await supabase
+.from("property_visits")
+.insert({
+
+property_id:propertyId,
+
+visitor_name:name,
+visitor_phone:phone,
+visitor_email:email,
+
+visit_date:visit_date,
+
+notes:message
+
+})
+
+if(error){
+
+document.getElementById("visit_result").innerHTML=
+`<div class="card">${error.message}</div>`
+
+return
+}
+
+document.getElementById("visit_result").innerHTML=
+"<div class='card'>Visita agendada com sucesso!</div>"
+
+}
+
+loadProperty()
+
+</script>
+
+</body>
+</html>
