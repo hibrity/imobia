@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Área do cliente</title>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    window.supabase = createClient(
+      "https://SEU_PROJETO.supabase.co",
+      "SUA_ANON_KEY"
+    );
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-3 {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .stat {
+      background: #0b1220;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+    }
+
+    @media (max-width: 980px) {
+      .grid, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando área do cliente...</div>
+      </div>
+
+      <div class="row" style="max-width:460px;width:100%;">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./app.html">Conta</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Meu perfil</h3>
+          <div id="profile_box" class="item">Carregando...</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Meu resumo</h3>
+          <div class="grid-3" id="stats_box"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Atualizar interesse</h3>
+
+          <select id="interest_type">
+            <option value="">Tipo de interesse</option>
+            <option value="buy">Compra</option>
+            <option value="rent">Aluguel</option>
+            <option value="investment">Investimento</option>
+          </select>
+
+          <textarea id="client_notes" placeholder="Descreva o imóvel que procura"></textarea>
+
+          <button class="primary" onclick="saveClientProfile()">Salvar meu perfil</button>
+          <div id="profile_result"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Buscar imóveis</h3>
+
+      <div class="row">
+        <input id="filter_city" placeholder="Cidade" />
+        <select id="filter_type">
+          <option value="">Todos os tipos</option>
+          <option value="house">Casa</option>
+          <option value="apartment">Apartamento</option>
+          <option value="land">Terreno</option>
+          <option value="commercial">Comercial</option>
+        </select>
+        <select id="filter_purpose">
+          <option value="">Venda ou aluguel</option>
+          <option value="sale">Venda</option>
+          <option value="rent">Aluguel</option>
+        </select>
+      </div>
+
+      <button class="ghost" onclick="loadProperties()">Aplicar filtros</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin-top:0;">Imóveis disponíveis</h3>
+        <div id="properties_list">Carregando...</div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;">Meus interesses</h3>
+          <div id="interests_list">Carregando...</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Minhas visitas</h3>
+          <div id="visits_list">Carregando...</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Favoritos</h3>
+          <div id="favorites_list">Carregando...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentProfile = null;
+    let currentClientRecord = null;
+    let currentCompanyId = null;
+    let allProperties = [];
+
+    function getFavoritesKey() {
+      return `imobia_favorites_${currentUser?.id || "guest"}`;
+    }
+
+    function getFavorites() {
+      try {
+        return JSON.parse(localStorage.getItem(getFavoritesKey()) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setFavorites(list) {
+      localStorage.setItem(getFavoritesKey(), JSON.stringify(list));
+    }
+
+    function isFavorite(propertyId) {
+      return getFavorites().includes(propertyId);
+    }
+
+    function toggleFavorite(propertyId) {
+      const favorites = getFavorites();
+      const exists = favorites.includes(propertyId);
+
+      const next = exists
+        ? favorites.filter(id => id !== propertyId)
+        : [...favorites, propertyId];
+
+      setFavorites(next);
+      renderFavorites();
+      renderPropertiesList(allProperties);
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    async function getFallbackCompany() {
+      const { data } = await supabase
+        .from("imobix_companies")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    async function ensureClientRecord() {
+      let query = supabase
+        .from("property_clients")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("user_id", currentUser.id)
+        .limit(1);
+
+      const { data } = await query.maybeSingle();
+
+      if (data) {
+        currentClientRecord = data;
+        return;
+      }
+
+      const payload = {
+        company_id: currentCompanyId,
+        user_id: currentUser.id,
+        full_name: currentProfile?.full_name || currentUser.email,
+        phone: currentProfile?.phone || null,
+        email: currentUser.email || null,
+        interest_type: currentProfile?.role === "client" ? "buy" : null,
+        notes: null,
+        created_by: currentUser.id
+      };
+
+      const { data: inserted, error } = await supabase
+        .from("property_clients")
+        .insert(payload)
+        .select("*")
+        .single();
+
+      if (!error && inserted) {
+        currentClientRecord = inserted;
+      }
+    }
+
+    function propertyTypeLabel(v) {
+      if (v === "house") return "Casa";
+      if (v === "apartment") return "Apartamento";
+      if (v === "land") return "Terreno";
+      if (v === "commercial") return "Comercial";
+      return v || "-";
+    }
+
+    function purposeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function interestLabel(v) {
+      if (v === "buy") return "Compra";
+      if (v === "rent") return "Aluguel";
+      if (v === "investment") return "Investimento";
+      return v || "-";
+    }
+
+    function visitStatusLabel(v) {
+      if (v === "scheduled") return "Agendada";
+      if (v === "confirmed") return "Confirmada";
+      if (v === "completed") return "Realizada";
+      if (v === "cancelled") return "Cancelada";
+      return v || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function renderProfileBox() {
+      const box = document.getElementById("profile_box");
+
+      box.innerHTML = `
+        <b>${currentClientRecord?.full_name || currentUser.email}</b><br>
+        Email: ${currentUser.email || "-"}<br>
+        Telefone: ${currentClientRecord?.phone || currentProfile?.phone || "-"}<br>
+        Interesse: ${interestLabel(currentClientRecord?.interest_type)}<br>
+        <span class="badge">Cliente</span>
+      `;
+
+      document.getElementById("interest_type").value = currentClientRecord?.interest_type || "";
+      document.getElementById("client_notes").value = currentClientRecord?.notes || "";
+    }
+
+    async function saveClientProfile() {
+      const box = document.getElementById("profile_result");
+
+      if (!currentClientRecord?.id) {
+        box.innerHTML = `<div class="item">Cadastro do cliente não encontrado.</div>`;
+        return;
+      }
+
+      const payload = {
+        interest_type: document.getElementById("interest_type").value || null,
+        notes: document.getElementById("client_notes").value.trim() || null
+      };
+
+      const { error, data } = await supabase
+        .from("property_clients")
+        .update(payload)
+        .eq("id", currentClientRecord.id)
+        .select("*")
+        .single();
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      currentClientRecord = data;
+      box.innerHTML = `<div class="item">Perfil atualizado com sucesso.</div>`;
+      renderProfileBox();
+    }
+
+    async function sendInterest(propertyId) {
+      if (!currentClientRecord?.id) return;
+
+      const { error } = await supabase
+        .from("property_interest")
+        .insert({
+          company_id: currentCompanyId,
+          property_id: propertyId,
+          client_user_id: currentUser.id,
+          message: `Interesse enviado pelo cliente ${currentClientRecord.full_name}.`,
+          status: "new"
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadInterests();
+    }
+
+    function renderStats(interestsCount, visitsCount, favoritesCount) {
+      document.getElementById("stats_box").innerHTML = `
+        <div class="stat">
+          Interesses
+          <strong>${interestsCount}</strong>
+        </div>
+        <div class="stat">
+          Visitas
+          <strong>${visitsCount}</strong>
+        </div>
+        <div class="stat">
+          Favoritos
+          <strong>${favoritesCount}</strong>
+        </div>
+      `;
+    }
+
+    function renderPropertiesList(list) {
+      const box = document.getElementById("properties_list");
+
+      if (!list.length) {
+        box.innerHTML = `<div class="item">Nenhum imóvel encontrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = list.map(p => `
+        <div class="item">
+          <b>${p.title}</b><br>
+          ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
+          ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
+          Preço: ${formatMoney(p.price)}<br>
+          Área: ${p.area_m2 || "-"} m²<br>
+          Quartos: ${p.bedrooms || "-"} • Banheiros: ${p.bathrooms || "-"} • Vagas: ${p.garage_spots || "-"}<br>
+          ${p.description ? `<div class="muted" style="margin-top:8px;">${p.description}</div>` : ""}
+          <div class="row" style="margin-top:10px;">
+            <button class="primary" onclick="sendInterest('${p.id}')">Tenho interesse</button>
+            <button class="${isFavorite(p.id) ? "warning" : "ghost"}" onclick="toggleFavorite('${p.id}')">
+              ${isFavorite(p.id) ? "Desfavoritar" : "Favoritar"}
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadProperties() {
+      const city = document.getElementById("filter_city").value.trim();
+      const type = document.getElementById("filter_type").value;
+      const purpose = document.getElementById("filter_purpose").value;
+
+      let query = supabase
+        .from("properties")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+
+      if (city) query = query.ilike("city", `%${city}%`);
+      if (type) query = query.eq("property_type", type);
+      if (purpose) query = query.eq("purpose", purpose);
+
+      const { data, error } = await query;
+
+      if (error) {
+        document.getElementById("properties_list").innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      allProperties = data || [];
+      renderPropertiesList(allProperties);
+      renderFavorites();
+    }
+
+    async function loadInterests() {
+      const box = document.getElementById("interests_list");
+
+      const { data, error } = await supabase
+        .from("property_interest")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("client_user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return data || [];
+      }
+
+      if (!data || !data.length) {
+        box.innerHTML = `<div class="item">Você ainda não demonstrou interesse em nenhum imóvel.</div>`;
+        return [];
+      }
+
+      box.innerHTML = data.map(i => `
+        <div class="item">
+          <b>Interesse registrado</b><br>
+          Status: ${i.status || "-"}<br>
+          ${i.message || ""}
+        </div>
+      `).join("");
+
+      return data;
+    }
+
+    async function loadVisits() {
+      const box = document.getElementById("visits_list");
+
+      if (!currentClientRecord?.id) {
+        box.innerHTML = `<div class="item">Seu cadastro de cliente ainda não está disponível.</div>`;
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("property_visits")
+        .select("*")
+        .eq("company_id", currentCompanyId)
+        .eq("client_id", currentClientRecord.id)
+        .order("visit_date", { ascending: false });
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return [];
+      }
+
+      if (!data || !data.length) {
+        box.innerHTML = `<div class="item">Nenhuma visita agendada.</div>`;
+        return [];
+      }
+
+      box.innerHTML = data.map(v => `
+        <div class="item">
+          <b>Visita</b><br>
+          Data: ${v.visit_date ? new Date(v.visit_date).toLocaleString("pt-BR") : "-"}<br>
+          <span class="badge">${visitStatusLabel(v.status)}</span>
+          ${v.notes ? `<div class="muted" style="margin-top:8px;">${v.notes}</div>` : ""}
+        </div>
+      `).join("");
+
+      return data;
+    }
+
+    function renderFavorites() {
+      const box = document.getElementById("favorites_list");
+      const favorites = getFavorites();
+
+      if (!favorites.length) {
+        box.innerHTML = `<div class="item">Nenhum imóvel favoritado.</div>`;
+        return;
+      }
+
+      const favoriteProperties = allProperties.filter(p => favorites.includes(p.id));
+
+      if (!favoriteProperties.length) {
+        box.innerHTML = `<div class="item">Nenhum favorito disponível com os filtros atuais.</div>`;
+        return;
+      }
+
+      box.innerHTML = favoriteProperties.map(p => `
+        <div class="item">
+          <b>${p.title}</b><br>
+          ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
+          ${p.city || "-"}<br>
+          Preço: ${formatMoney(p.price)}<br>
+          <button class="warning" style="margin-top:10px;" onclick="toggleFavorite('${p.id}')">Remover dos favoritos</button>
+        </div>
+      `).join("");
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (currentProfile?.company_id) {
+        currentCompanyId = currentProfile.company_id;
+        document.getElementById("page_subtitle").textContent =
+          `${currentProfile.imobix_companies?.name || "Imobiliária"} • Área do cliente`;
+      } else {
+        const fallbackCompany = await getFallbackCompany();
+        currentCompanyId = fallbackCompany?.id || null;
+        document.getElementById("page_subtitle").textContent =
+          `${fallbackCompany?.name || "Imobia"} • Área do cliente`;
+      }
+
+      if (!currentCompanyId) {
+        document.getElementById("profile_box").innerHTML = `<div class="item">Nenhuma imobiliária disponível.</div>`;
+        return;
+      }
+
+      await ensureClientRecord();
+      renderProfileBox();
+      await loadProperties();
+      const interests = await loadInterests();
+      const visits = await loadVisits();
+      const favorites = getFavorites();
+      renderStats(interests.length, visits.length, favorites.length);
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.loadProperties = loadProperties;
+    window.saveClientProfile = saveClientProfile;
+    window.sendInterest = sendInterest;
+    window.toggleFavorite = toggleFavorite;
+  </script>
+</body>
+</html>
