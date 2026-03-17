@@ -1,6 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+<head><!DOCTYPE html>
+<html lang="pt-BR">
 <head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Imobia AI</title>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+window.supabase = createClient(
+  "https://bcfjciljugeascgyokxa.supabase.co",
+  "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+);
+</script>
+
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:white}
+.wrap{max-width:900px;margin:auto;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:16px}
+.top{display:flex;justify-content:space-between;margin-bottom:20px}
+button{border:none;border-radius:10px;padding:10px 14px;font-weight:bold;cursor:pointer}
+.primary{background:#22c55e;color:black}
+.ghost{background:#334155;color:white}
+.danger{background:#ef4444;color:white}
+.chip{background:#334155;padding:8px 10px;border-radius:999px;margin:4px;display:inline-block;cursor:pointer;font-size:13px}
+.chat{max-height:300px;overflow:auto;margin-top:10px}
+.msg{padding:10px;border-radius:10px;margin-top:8px;max-width:80%}
+.user{background:#22c55e;color:black;margin-left:auto}
+.ai{background:#0b1220}
+.property{background:#0b1220;padding:10px;border-radius:10px;margin-top:10px}
+.hidden{display:none}
+textarea{width:100%;padding:10px;border-radius:10px;border:none;margin-top:10px}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+  <h2>Imobia AI</h2>
+  <button class="danger" onclick="logout()">Sair</button>
+</div>
+
+<div class="card">
+
+<button class="primary" onclick="toggleChat()">Abrir chat</button>
+
+<div>
+  <span class="chip" onclick="quick('Quero comprar apartamento em São Paulo até 500 mil')">Apartamento</span>
+  <span class="chip" onclick="quick('Quero casa para aluguel')">Aluguel</span>
+  <span class="chip" onclick="quick('Quero terreno barato')">Terreno</span>
+</div>
+
+<div id="chat" class="hidden">
+  <div id="chatBox" class="chat"></div>
+  <textarea id="msg"></textarea>
+  <button class="primary" onclick="send()">Enviar</button>
+</div>
+
+<h3>Imóveis sugeridos</h3>
+<div id="properties">Nenhum ainda</div>
+
+</div>
+
+</div>
+
+<script>
+let open=false;
+let user=null;
+
+async function logout(){
+  await supabase.auth.signOut();
+  location.href="./app.html";
+}
+
+async function init(){
+  const { data } = await supabase.auth.getUser();
+  user = data.user;
+}
+init();
+
+function toggleChat(){
+  open=!open;
+  document.getElementById("chat").classList.toggle("hidden", !open);
+}
+
+function quick(text){
+  document.getElementById("msg").value=text;
+  send();
+}
+
+function addMsg(type,text){
+  const box=document.getElementById("chatBox");
+  box.innerHTML+=`<div class="msg ${type}">${text}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+
+async function send(){
+  const text=document.getElementById("msg").value;
+  if(!text) return;
+
+  addMsg("user",text);
+  document.getElementById("msg").value="";
+
+  // 🔥 IA GEMINI
+  const res = await fetch("https://zbxrpprwjrholrycwsqa.supabase.co/functions/v1/clever-service",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({ prompt:text })
+  });
+
+  const data = await res.json();
+  const aiText = data.response || "Não entendi";
+
+  addMsg("ai",aiText);
+
+  // 🔥 BUSCA INTELIGENTE
+  searchProperties(text);
+}
+
+async function searchProperties(text){
+
+  let query = supabase.from("properties").select("*").eq("is_public",true);
+
+  if(text.toLowerCase().includes("alug"))
+    query = query.eq("purpose","rent");
+
+  if(text.toLowerCase().includes("compr"))
+    query = query.eq("purpose","sale");
+
+  if(text.toLowerCase().includes("apart"))
+    query = query.eq("property_type","apartment");
+
+  if(text.toLowerCase().includes("casa"))
+    query = query.eq("property_type","house");
+
+  if(text.toLowerCase().includes("terreno"))
+    query = query.eq("property_type","land");
+
+  const { data } = await query.limit(5);
+
+  if(!data || !data.length){
+    document.getElementById("properties").innerHTML="Nenhum encontrado";
+    return;
+  }
+
+  document.getElementById("properties").innerHTML =
+    data.map(p=>`
+      <div class="property">
+        <b>${p.title}</b><br>
+        ${p.city || "-"}<br>
+        R$ ${Number(p.price||0).toLocaleString()}
+        <br>
+        <button onclick="interesse('${p.id}','${p.title}')">Tenho interesse</button>
+      </div>
+    `).join("");
+}
+
+async function interesse(id,title){
+
+  await supabase.from("property_interest").insert({
+    property_id:id,
+    client_user_id:user.id,
+    message:"Lead IA"
+  });
+
+  alert("Interesse enviado!");
+}
+
+</script>
+
+</body>
+</html>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Imobia AI</title>
