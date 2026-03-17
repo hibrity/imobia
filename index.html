@@ -1,564 +1,345 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Imobia • Plataforma imobiliária inteligente</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imobia • Plataforma imobiliária</title>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    window.supabase = createClient(
-      "https://bcfjciljugeascgyokxa.supabase.co",
-      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-    );
-  </script>
+window.supabase = createClient(
+  "https://bcfjciljugeascgyokxa.supabase.co",
+  "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+);
+</script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    html {
-      scroll-behavior: smooth;
-    }
+*{
+box-sizing:border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #ffffff;
-    }
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#0f172a;
+color:white;
+}
 
-    .wrap {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 18px;
-    }
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:12px;
+margin-bottom:20px;
+}
 
-    .brand {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
+.brand{
+font-size:28px;
+font-weight:bold;
+}
 
-    .brand-sub {
-      color: #cbd5e1;
-      font-size: 13px;
-      margin-top: 3px;
-    }
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+button,a.btn{
+padding:12px 18px;
+border-radius:10px;
+border:none;
+cursor:pointer;
+font-weight:bold;
+text-decoration:none;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+}
 
-    .hero {
-      background: linear-gradient(135deg, #1e293b 0%, #0b1220 100%);
-      border-radius: 24px;
-      padding: 26px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.2);
-    }
+.primary{
+background:#22c55e;
+color:black;
+}
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 18px;
-      align-items: center;
-    }
+.ghost{
+background:#334155;
+color:white;
+}
 
-    .hero h1 {
-      margin: 0 0 12px 0;
-      font-size: 34px;
-      line-height: 1.1;
-    }
+.outline{
+background:transparent;
+border:1px solid rgba(255,255,255,.2);
+color:white;
+}
 
-    .hero p {
-      margin: 0;
-      color: #cbd5e1;
-      font-size: 16px;
-      line-height: 1.5;
-    }
+.card{
+background:#1e293b;
+padding:24px;
+border-radius:16px;
+margin-bottom:18px;
+}
 
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
+.hero{
+text-align:center;
+margin-bottom:20px;
+}
 
-    .hero-side {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 18px;
-      padding: 18px;
-    }
+.hero h1{
+margin:0;
+font-size:32px;
+}
 
-    .hero-side-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+.hero p{
+color:#cbd5e1;
+margin-top:10px;
+}
 
-    .hero-side-text {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.45;
-    }
+.search-card{
+background:#0b1220;
+border:1px solid rgba(255,255,255,.06);
+border-radius:16px;
+padding:20px;
+}
 
-    .section-card {
-      background: #1e293b;
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.16);
-    }
+.search-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+margin-top:12px;
+}
 
-    .section-title {
-      margin: 0 0 14px 0;
-      font-size: 24px;
-      font-weight: 800;
-    }
+input,select{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:none;
+font-size:15px;
+}
 
-    .section-subtitle {
-      margin: -4px 0 16px 0;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
+.results{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:14px;
+}
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
+.property{
+background:#0b1220;
+border-radius:14px;
+padding:14px;
+border:1px solid rgba(255,255,255,.06);
+}
 
-    .quick-item {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 16px;
-      text-decoration: none;
-      color: #fff;
-      display: block;
-    }
+.property-title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:6px;
+}
 
-    .quick-item-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
+.muted{
+color:#cbd5e1;
+font-size:14px;
+}
 
-    .quick-item-text {
-      color: #cbd5e1;
-      font-size: 13px;
-      line-height: 1.4;
-    }
+.badge{
+display:inline-block;
+background:#22c55e;
+color:black;
+padding:4px 8px;
+border-radius:999px;
+font-size:12px;
+margin-top:6px;
+font-weight:bold;
+}
 
-    .search-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
+@media(max-width:900px){
 
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-      gap: 14px;
-    }
+.search-grid{
+grid-template-columns:1fr;
+}
 
-    .property-card {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 14px;
-    }
+.hero h1{
+font-size:26px;
+}
 
-    .property-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+}
 
-    .muted {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .badge {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #22c55e;
-      color: #000;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      border: none;
-      outline: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 16px;
-      background: #ffffff;
-      color: #111827;
-    }
-
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    button,
-    a.btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 800;
-      text-decoration: none;
-    }
-
-    .primary {
-      background: #22c55e;
-      color: #000;
-    }
-
-    .ghost {
-      background: #334155;
-      color: #fff;
-    }
-
-    .outline {
-      background: transparent;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.14);
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .row > * {
-      flex: 1;
-      min-width: 140px;
-    }
-
-    .empty-box {
-      background: #0b1220;
-      border-radius: 14px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.06);
-      color: #cbd5e1;
-    }
-
-    .footer-note {
-      color: #94a3b8;
-      font-size: 13px;
-      text-align: center;
-      padding: 6px 0 18px 0;
-    }
-
-    @media (max-width: 980px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .search-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .hero h1 {
-        font-size: 28px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .brand {
-        font-size: 24px;
-      }
-
-      .top-actions {
-        width: 100%;
-      }
-
-      .top-actions a {
-        flex: 1 1 calc(50% - 10px);
-      }
-
-      .quick-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .search-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-title {
-        font-size: 22px;
-      }
-
-      .hero {
-        padding: 20px;
-      }
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div>
-        <div class="brand">Imobia</div>
-        <div class="brand-sub">Plataforma imobiliária inteligente</div>
-      </div>
 
-      <div class="top-actions">
-        <a class="btn ghost" href="#buscar">Buscar imóveis</a>
-        <a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
-        <a class="btn primary" href="./app.html">Entrar</a>
-        <a class="btn outline" href="./app.html">Criar conta</a>
-      </div>
-    </div>
+<div class="wrap">
 
-    <div class="hero">
-      <div class="hero-grid">
-        <div>
-          <h1>Encontre, anuncie e gerencie imóveis em um só lugar</h1>
-          <p>
-            A Imobia conecta imobiliárias, corretores, compradores e proprietários em uma experiência mais simples,
-            com busca pública, captação de imóveis e ferramentas inteligentes.
-          </p>
+<div class="topbar">
 
-          <div class="hero-actions">
-            <a class="btn primary" href="#buscar">Começar busca</a>
-            <a class="btn ghost" href="./imobia-ai.html">Falar com Imobia AI</a>
-            <a class="btn outline" href="./anunciar.html">Quero anunciar</a>
-          </div>
-        </div>
+<div class="brand">Imobia</div>
 
-        <div class="hero-side">
-          <div class="hero-side-title">Acesso rápido</div>
-          <div class="hero-side-text">
-            Use a Imobia para buscar imóveis, anunciar um imóvel, falar com a IA ou entrar na área da imobiliária.
-          </div>
+<div class="actions">
+<a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
+<a class="btn ghost" href="./imobia-ai.html">Imobia AI</a>
+<a class="btn primary" href="./app.html">Entrar</a>
+<a class="btn outline" href="./app.html">Criar conta</a>
+</div>
 
-          <div class="row" style="margin-top:14px;">
-            <a class="btn ghost" href="./app.html">Área interna</a>
-            <a class="btn ghost" href="./cliente-home.html">Área do cliente</a>
-          </div>
-        </div>
-      </div>
-    </div>
+</div>
 
-    <div class="section-card">
-      <h2 class="section-title">O que você quer fazer?</h2>
-      <div class="section-subtitle">Escolha o caminho principal sem precisar adivinhar para onde ir.</div>
+<div class="hero">
+<h1>Encontre seu próximo imóvel</h1>
+<p>Busque casas, apartamentos, terrenos e imóveis comerciais em um só lugar.</p>
+</div>
 
-      <div class="quick-grid">
-        <a class="quick-item" href="#buscar">
-          <div class="quick-item-title">Buscar imóveis</div>
-          <div class="quick-item-text">Veja casas, apartamentos, terrenos e imóveis comerciais disponíveis.</div>
-        </a>
+<div class="card">
 
-        <a class="quick-item" href="./anunciar.html">
-          <div class="quick-item-title">Anunciar imóvel</div>
-          <div class="quick-item-text">Envie seu imóvel para análise e captação pela imobiliária.</div>
-        </a>
+<div class="search-card">
 
-        <a class="quick-item" href="./imobia-ai.html">
-          <div class="quick-item-title">Falar com IA</div>
-          <div class="quick-item-text">Receba sugestões de imóveis, investimento e próximos passos.</div>
-        </a>
+<h2 style="margin-top:0;">Buscar imóveis</h2>
 
-        <a class="quick-item" href="./app.html">
-          <div class="quick-item-title">Entrar na plataforma</div>
-          <div class="quick-item-text">Acesse sua conta, crie sua imobiliária e use o sistema interno.</div>
-        </a>
-      </div>
-    </div>
+<div class="search-grid">
 
-    <div id="buscar" class="section-card">
-      <h2 class="section-title">Buscar imóveis</h2>
-      <div class="section-subtitle">Filtre rapidamente por cidade, tipo e faixa de preço.</div>
+<input id="city" placeholder="Cidade">
 
-      <div class="search-grid">
-        <input id="search_city" placeholder="Cidade" />
+<select id="type">
+<option value="">Tipo</option>
+<option value="house">Casa</option>
+<option value="apartment">Apartamento</option>
+<option value="land">Terreno</option>
+<option value="commercial">Comercial</option>
+</select>
 
-        <select id="search_type">
-          <option value="">Tipo</option>
-          <option value="house">Casa</option>
-          <option value="apartment">Apartamento</option>
-          <option value="land">Terreno</option>
-          <option value="commercial">Comercial</option>
-        </select>
+<select id="purpose">
+<option value="">Venda ou aluguel</option>
+<option value="sale">Venda</option>
+<option value="rent">Aluguel</option>
+</select>
 
-        <select id="search_purpose">
-          <option value="">Venda ou aluguel</option>
-          <option value="sale">Venda</option>
-          <option value="rent">Aluguel</option>
-        </select>
+<input id="price" type="number" placeholder="Preço máximo">
 
-        <input id="search_price" type="number" placeholder="Preço máximo" />
-      </div>
+</div>
 
-      <div class="row" style="margin-top:8px;">
-        <button class="primary" onclick="searchProperties()">Buscar</button>
-        <button class="ghost" onclick="resetSearch()">Limpar filtros</button>
-      </div>
-    </div>
+<button class="primary" style="margin-top:12px;" onclick="searchProperties()">
+Buscar
+</button>
 
-    <div class="section-card">
-      <h2 class="section-title">Imóveis encontrados</h2>
-      <div class="section-subtitle">Abra o imóvel para ver detalhes e continuar o atendimento.</div>
+</div>
 
-      <div id="property_list" class="results-grid">
-        <div class="empty-box">Carregando imóveis...</div>
-      </div>
-    </div>
+</div>
 
-    <div class="footer-note">
-      Imobia • Plataforma imobiliária inteligente
-    </div>
-  </div>
+<div class="card">
 
-  <script>
-    function formatMoney(value) {
-      if (value === null || value === undefined || value === "") return "-";
-      return Number(value).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-    }
+<h2 style="margin-top:0;">Imóveis encontrados</h2>
 
-    function propertyTypeLabel(type) {
-      if (type === "house") return "Casa";
-      if (type === "apartment") return "Apartamento";
-      if (type === "land") return "Terreno";
-      if (type === "commercial") return "Comercial";
-      return type || "-";
-    }
+<div id="list" class="results">
+Carregando imóveis...
+</div>
 
-    function purposeLabel(purpose) {
-      if (purpose === "sale") return "Venda";
-      if (purpose === "rent") return "Aluguel";
-      return purpose || "-";
-    }
+</div>
 
-    function statusLabel(status) {
-      if (status === "available") return "Disponível";
-      if (status === "reserved") return "Reservado";
-      if (status === "sold") return "Vendido";
-      if (status === "rented") return "Alugado";
-      return status || "Disponível";
-    }
+</div>
 
-    function renderProperties(data) {
-      const list = document.getElementById("property_list");
+<script>
 
-      if (!data || !data.length) {
-        list.innerHTML = `<div class="empty-box">Nenhum imóvel encontrado.</div>`;
-        return;
-      }
+function money(v){
+if(!v)return "-";
+return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
 
-      list.innerHTML = data.map(p => `
-        <div class="property-card">
-          <div class="property-title">${p.title || "Imóvel"}</div>
+function labelType(v){
+if(v==="house")return"Casa";
+if(v==="apartment")return"Apartamento";
+if(v==="land")return"Terreno";
+if(v==="commercial")return"Comercial";
+return v||"-";
+}
 
-          <div class="muted">
-            ${propertyTypeLabel(p.property_type)} • ${purposeLabel(p.purpose)}<br>
-            ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
-            Preço: ${formatMoney(p.price)}<br>
-            Área: ${p.area_m2 || "-"} m²
-          </div>
+function labelPurpose(v){
+if(v==="sale")return"Venda";
+if(v==="rent")return"Aluguel";
+return v||"-";
+}
 
-          <span class="badge">${statusLabel(p.status)}</span>
+async function searchProperties(){
 
-          <div class="row" style="margin-top:12px;">
-            <a class="btn ghost" href="./imovel.html?id=${encodeURIComponent(p.id)}">Ver imóvel</a>
-            <a class="btn primary" href="./app.html">Tenho interesse</a>
-          </div>
-        </div>
-      `).join("");
-    }
+const city=document.getElementById("city").value.trim();
+const type=document.getElementById("type").value;
+const purpose=document.getElementById("purpose").value;
+const price=document.getElementById("price").value;
 
-    async function searchProperties() {
-      const city = document.getElementById("search_city").value.trim();
-      const type = document.getElementById("search_type").value;
-      const purpose = document.getElementById("search_purpose").value;
-      const price = document.getElementById("search_price").value.trim();
+let query=supabase
+.from("properties")
+.select("*")
+.eq("is_public",true)
+.order("created_at",{ascending:false});
 
-      let query = supabase
-        .from("properties")
-        .select("*")
-        .eq("is_public", true)
-        .order("created_at", { ascending: false });
+if(city)query=query.ilike("city","%"+city+"%");
+if(type)query=query.eq("property_type",type);
+if(purpose)query=query.eq("purpose",purpose);
 
-      if (city) {
-        query = query.ilike("city", `%${city}%`);
-      }
+const {data,error}=await query;
 
-      if (type) {
-        query = query.eq("property_type", type);
-      }
+if(error){
+document.getElementById("list").innerHTML=error.message;
+return;
+}
 
-      if (purpose) {
-        query = query.eq("purpose", purpose);
-      }
+let items=data||[];
 
-      const { data, error } = await query;
+if(price){
+items=items.filter(p=>Number(p.price||0)<=Number(price));
+}
 
-      if (error) {
-        document.getElementById("property_list").innerHTML =
-          `<div class="empty-box">${error.message}</div>`;
-        return;
-      }
+render(items);
 
-      let filtered = data || [];
+}
 
-      if (price) {
-        const maxPrice = Number(price);
-        filtered = filtered.filter(item => Number(item.price || 0) <= maxPrice);
-      }
+function render(items){
 
-      renderProperties(filtered);
-    }
+if(!items.length){
+document.getElementById("list").innerHTML="Nenhum imóvel encontrado.";
+return;
+}
 
-    function resetSearch() {
-      document.getElementById("search_city").value = "";
-      document.getElementById("search_type").value = "";
-      document.getElementById("search_purpose").value = "";
-      document.getElementById("search_price").value = "";
-      searchProperties();
-    }
+document.getElementById("list").innerHTML=items.map(p=>`
 
-    searchProperties();
-  </script>
+<div class="property">
+
+<div class="property-title">${p.title||"Imóvel"}</div>
+
+<div class="muted">
+
+${labelType(p.property_type)} • ${labelPurpose(p.purpose)}<br>
+${p.city||"-"}<br>
+Preço: ${money(p.price)}
+
+</div>
+
+<span class="badge">${p.status||"Disponível"}</span>
+
+<div style="margin-top:10px">
+
+<a class="btn ghost" href="./imovel.html?id=${p.id}">
+Ver imóvel
+</a>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+searchProperties();
+
+</script>
+
 </body>
 </html>
