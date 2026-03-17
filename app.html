@@ -1,219 +1,837 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Acesso</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<title>Imobia • Acesso</title>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
 
-<script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-window.supabase = createClient(
-  "https://bcfjciljugeascgyokxa.supabase.co",
-  "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-);
-</script>
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
 
-<style>
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-}
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
 
-.wrap{
-max-width:420px;
-margin:auto;
-padding:30px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-.card{
-background:#1e293b;
-padding:24px;
-border-radius:12px;
-margin-bottom:20px;
-}
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    }
 
-h2{
-margin-top:0;
-}
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+      word-break: break-word;
+    }
 
-input{
-width:100%;
-padding:12px;
-margin-top:8px;
-margin-bottom:12px;
-border:none;
-border-radius:8px;
-}
+    input, select {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      background: white;
+      color: black;
+    }
 
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+    }
 
-.primary{
-background:#22c55e;
-color:black;
-}
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
 
-.ghost{
-background:#334155;
-color:white;
-}
+    .ghost {
+      background: #334155;
+      color: white;
+    }
 
-.item{
-background:#0b1220;
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-}
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
 
-.center{
-text-align:center;
-}
+    .outline {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,.16);
+    }
 
-a{
-color:#22c55e;
-cursor:pointer;
-}
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-.hidden{
-display:none;
-}
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
 
-</style>
+    .hidden {
+      display: none;
+    }
 
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 6px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .hero {
+      min-height: calc(100vh - 40px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-line {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 14px;
+    }
+
+    .profile-option {
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: bold;
+      transition: .2s ease;
+    }
+
+    .profile-option.active {
+      background: #22c55e;
+      color: black;
+      border-color: #22c55e;
+    }
+
+    .small-text {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div id="auth_screen">
+      <div class="hero">
+        <div style="width:100%;">
+          <div class="topbar">
+            <div>
+              <div class="brand">Imobia</div>
+              <div class="subtitle">Plataforma imobiliária inteligente</div>
+            </div>
 
-<div class="wrap">
+            <div class="row" style="max-width:220px;width:100%;">
+              <a class="btn ghost" href="./index.html">Portal</a>
+            </div>
+          </div>
 
-<div class="center">
-<h1>Imobia</h1>
-<p>Plataforma imobiliária inteligente</p>
-</div>
+          <div class="grid">
+            <div class="card">
+              <h3 style="margin-top:0;">Entrar</h3>
 
-<div class="card">
+              <input id="login_email" type="email" placeholder="Email" />
+              <input id="login_password" type="password" placeholder="Senha" />
 
-<h2>Entrar</h2>
+              <button id="login_btn" class="primary" style="width:100%;">
+                Entrar
+              </button>
 
-<input id="login_email" placeholder="Email">
+              <div id="login_result"></div>
+            </div>
 
-<input id="login_password" type="password" placeholder="Senha">
+            <div class="card">
+              <h3 style="margin-top:0;">Criar conta</h3>
 
-<button class="primary" onclick="login()">
-Entrar
-</button>
+              <div class="small-text">
+                Escolha o perfil para mostrar apenas os campos necessários.
+              </div>
 
-<div id="login_result"></div>
+              <div class="profile-grid">
+                <div class="profile-option active" data-role="company">
+                  Imobiliária
+                </div>
+                <div class="profile-option" data-role="broker">
+                  Corretor
+                </div>
+                <div class="profile-option" data-role="client">
+                  Cliente
+                </div>
+              </div>
 
-<p class="center">
-Não tem conta?
-<a onclick="showSignup()">Criar conta</a>
-</p>
+              <div id="signup_company_fields">
+                <input id="signup_company_name" placeholder="Nome da imobiliária" />
+                <input id="signup_company_cnpj" placeholder="CNPJ" />
+                <input id="signup_company_phone" placeholder="Telefone" />
+                <input id="signup_company_city" placeholder="Cidade" />
+                <input id="signup_company_full_name" placeholder="Seu nome completo" />
+              </div>
 
-</div>
+              <div id="signup_broker_fields" class="hidden">
+                <input id="signup_broker_full_name" placeholder="Nome completo" />
+                <input id="signup_broker_phone" placeholder="Telefone" />
+                <div class="row">
+                  <input id="signup_broker_creci" placeholder="CRECI" />
+                  <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
+                </div>
+                <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
+              </div>
 
-<div id="signup_block" class="card hidden">
+              <div id="signup_client_fields" class="hidden">
+                <input id="signup_client_full_name" placeholder="Nome completo" />
+                <input id="signup_client_phone" placeholder="Telefone" />
+              </div>
 
-<h2>Criar conta</h2>
+              <input id="signup_email" type="email" placeholder="Email" />
+              <input id="signup_password" type="password" placeholder="Senha" />
 
-<input id="signup_email" placeholder="Email">
+              <button id="signup_btn" class="ghost" style="width:100%;">
+                Criar conta
+              </button>
 
-<input id="signup_password" type="password" placeholder="Senha">
+              <div id="signup_result"></div>
+            </div>
+          </div>
 
-<button class="primary" onclick="signup()">
-Criar conta
-</button>
+          <div class="status-line" id="boot_status">Carregando...</div>
+        </div>
+      </div>
+    </div>
 
-<div id="signup_result"></div>
+    <div id="company_setup_screen" class="hidden">
+      <div class="topbar">
+        <div>
+          <div class="brand">Imobia</div>
+          <div class="subtitle">Completar imobiliária</div>
+        </div>
 
-<p class="center">
-Já tem conta?
-<a onclick="showLogin()">Entrar</a>
-</p>
+        <div class="row" style="max-width:220px;width:100%;">
+          <a class="btn ghost" href="./index.html">Portal</a>
+          <button id="logout_btn_1" class="danger">Sair</button>
+        </div>
+      </div>
 
-</div>
+      <div class="card">
+        <h3 style="margin-top:0;">Dados da imobiliária</h3>
 
-</div>
+        <input id="company_name" placeholder="Nome da imobiliária" />
+        <input id="company_cnpj" placeholder="CNPJ" />
+        <input id="company_phone" placeholder="Telefone" />
+        <input id="company_city" placeholder="Cidade" />
+        <input id="company_email" placeholder="Email da imobiliária" />
+        <input id="admin_full_name" placeholder="Seu nome completo" />
 
-<script>
+        <button id="create_company_btn" class="primary">
+          Criar imobiliária
+        </button>
 
-function showSignup(){
-document.querySelector(".card").classList.add("hidden");
-document.getElementById("signup_block").classList.remove("hidden");
-}
+        <div id="company_result"></div>
+      </div>
+    </div>
 
-function showLogin(){
-document.querySelector(".card").classList.remove("hidden");
-document.getElementById("signup_block").classList.add("hidden");
-}
+    <div id="app_screen" class="hidden">
+      <div class="topbar">
+        <div>
+          <div class="brand">Imobia</div>
+          <div class="subtitle" id="app_subtitle">Carregando perfil...</div>
+        </div>
 
-async function login(){
+        <div class="row" style="max-width:320px;width:100%;">
+          <a class="btn ghost" href="./index.html">Portal</a>
+          <button id="refresh_btn" class="ghost">Atualizar</button>
+          <button id="logout_btn_2" class="danger">Sair</button>
+        </div>
+      </div>
 
-const email=document.getElementById("login_email").value;
-const password=document.getElementById("login_password").value;
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h3 style="margin-top:0;">Minha conta</h3>
+            <div id="profile_info" class="item">Carregando...</div>
+          </div>
 
-const box=document.getElementById("login_result");
-box.innerHTML="";
+          <div class="card">
+            <h3 style="margin-top:0;">Entrar no sistema</h3>
+            <div id="role_actions"></div>
+          </div>
+        </div>
 
-const {error}=await supabase.auth.signInWithPassword({
-email,
-password
-});
+        <div>
+          <div class="card">
+            <h3 style="margin-top:0;">Funções do seu perfil</h3>
+            <div id="role_summary" class="item">Carregando...</div>
+          </div>
 
-if(error){
-box.innerHTML=`<div class="item">${error.message}</div>`;
-return;
-}
+          <div class="card">
+            <h3 style="margin-top:0;">Atalhos</h3>
+            <div class="row">
+              <a class="btn ghost" href="./index.html">Portal público</a>
+              <a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-location.href="./dashboard.html";
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-}
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
 
-async function signup(){
+    const authScreen = document.getElementById("auth_screen");
+    const setupScreen = document.getElementById("company_setup_screen");
+    const appScreen = document.getElementById("app_screen");
+    const bootStatus = document.getElementById("boot_status");
 
-const email=document.getElementById("signup_email").value;
-const password=document.getElementById("signup_password").value;
+    let selectedSignupRole = "company";
 
-const box=document.getElementById("signup_result");
-box.innerHTML="";
+    function showOnly(screen) {
+      authScreen.classList.add("hidden");
+      setupScreen.classList.add("hidden");
+      appScreen.classList.add("hidden");
+      screen.classList.remove("hidden");
+    }
 
-if(!email || !password){
-box.innerHTML=`<div class="item">Preencha email e senha.</div>`;
-return;
-}
+    function setBox(id, html) {
+      document.getElementById(id).innerHTML = html;
+    }
 
-const {error}=await supabase.auth.signUp({
-email,
-password,
-options:{
-emailRedirectTo:"https://hibrity.github.io/imobia/app.html"
-}
-});
+    function onlyDigits(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
 
-if(error){
-box.innerHTML=`<div class="item">${error.message}</div>`;
-return;
-}
+    function setSignupRole(role) {
+      selectedSignupRole = role;
 
-box.innerHTML=`<div class="item">
-Conta criada. Verifique seu email para confirmar.
-</div>`;
+      document.querySelectorAll(".profile-option").forEach(el => {
+        el.classList.toggle("active", el.dataset.role === role);
+      });
 
-}
+      document.getElementById("signup_company_fields").classList.toggle("hidden", role !== "company");
+      document.getElementById("signup_broker_fields").classList.toggle("hidden", role !== "broker");
+      document.getElementById("signup_client_fields").classList.toggle("hidden", role !== "client");
+    }
 
-</script>
+    async function getSession() {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return data.session;
+    }
 
+    async function getUser() {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return data.user;
+    }
+
+    async function getProfile(userId) {
+      const { data, error } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name, phone, email, city, cnpj)")
+        .eq("user_id", userId)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        return null;
+      }
+
+      return data || null;
+    }
+
+    function renderRoleSummary(profile) {
+      const role = profile.role;
+
+      if (role === "admin") {
+        setBox("role_summary", `
+          <b>Admin da imobiliária</b><br>
+          Pode gerenciar imóveis, captações, corretores, clientes, visitas e relatórios.<br>
+          <span class="badge">Acesso total</span>
+        `);
+        return;
+      }
+
+      if (role === "broker") {
+        setBox("role_summary", `
+          <b>Corretor</b><br>
+          Pode gerenciar seus imóveis, clientes, visitas e captações atribuídas.<br>
+          <span class="badge">Acesso comercial</span>
+        `);
+        return;
+      }
+
+      if (role === "client") {
+        setBox("role_summary", `
+          <b>Cliente</b><br>
+          Pode buscar imóveis, favoritar, solicitar visitas e acompanhar interesses.<br>
+          <span class="badge">Portal do cliente</span>
+        `);
+        return;
+      }
+
+      if (role === "owner") {
+        setBox("role_summary", `
+          <b>Proprietário</b><br>
+          Pode anunciar imóveis, acompanhar captações e falar com a imobiliária.<br>
+          <span class="badge">Captação de imóvel</span>
+        `);
+        return;
+      }
+
+      setBox("role_summary", `<b>Perfil não identificado</b>`);
+    }
+
+    function renderRoleActions(profile) {
+      const role = profile.role;
+
+      if (role === "admin") {
+        setBox("role_actions", `
+          <div class="row">
+            <a class="btn primary" href="./dashboard.html">Abrir dashboard</a>
+            <a class="btn ghost" href="./captacoes.html">Captações</a>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <a class="btn ghost" href="./imoveis.html">Imóveis</a>
+            <a class="btn ghost" href="./corretores.html">Corretores</a>
+          </div>
+        `);
+        return;
+      }
+
+      if (role === "broker") {
+        setBox("role_actions", `
+          <div class="row">
+            <a class="btn primary" href="./dashboard.html">Abrir painel</a>
+            <a class="btn ghost" href="./visitas.html">Visitas</a>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <a class="btn ghost" href="./clientes.html">Clientes</a>
+            <a class="btn ghost" href="./captacoes.html">Captações</a>
+          </div>
+        `);
+        return;
+      }
+
+      if (role === "client") {
+        setBox("role_actions", `
+          <div class="row">
+            <a class="btn primary" href="./cliente-home.html">Minha área</a>
+            <a class="btn ghost" href="./index.html">Buscar imóveis</a>
+          </div>
+        `);
+        return;
+      }
+
+      if (role === "owner") {
+        setBox("role_actions", `
+          <div class="row">
+            <a class="btn primary" href="./anunciar.html">Anunciar meu imóvel</a>
+            <a class="btn ghost" href="./captacoes.html">Minhas captações</a>
+          </div>
+        `);
+        return;
+      }
+
+      setBox("role_actions", `<div class="item">Seu perfil ainda não tem uma área definida.</div>`);
+    }
+
+    function renderProfileInfo(profile, user) {
+      const companyName = profile.imobix_companies?.name || "-";
+      const companyPhone = profile.imobix_companies?.phone || "-";
+
+      const creciInfo = profile.creci
+        ? `<br>CRECI: ${profile.creci}${profile.creci_state ? " - " + profile.creci_state : ""}`
+        : "";
+
+      setBox("profile_info", `
+        <b>${profile.full_name || user.email}</b><br>
+        Email: ${user.email}<br>
+        Perfil: ${profile.role}<br>
+        Imobiliária: ${companyName}<br>
+        Telefone da imobiliária: ${companyPhone}${creciInfo}<br>
+        <span class="badge">${profile.active ? "Ativo" : "Inativo"}</span>
+      `);
+
+      document.getElementById("app_subtitle").textContent = `${companyName} • ${profile.role}`;
+    }
+
+    async function login() {
+      const email = document.getElementById("login_email").value.trim();
+      const password = document.getElementById("login_password").value.trim();
+
+      setBox("login_result", "");
+
+      if (!email || !password) {
+        setBox("login_result", `<div class="item">Preencha email e senha.</div>`);
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setBox("login_result", `<div class="item">${error.message}</div>`);
+        return;
+      }
+
+      await bootstrap();
+    }
+
+    async function signup() {
+      const email = document.getElementById("signup_email").value.trim();
+      const password = document.getElementById("signup_password").value.trim();
+
+      setBox("signup_result", "");
+
+      if (!email || !password) {
+        setBox("signup_result", `<div class="item">Preencha email e senha para criar a conta.</div>`);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: "https://hibrity.github.io/imobia/app.html"
+        }
+      });
+
+      if (error) {
+        setBox("signup_result", `<div class="item">${error.message}</div>`);
+        return;
+      }
+
+      const userId = data.user?.id;
+
+      if (!userId) {
+        setBox("signup_result", `<div class="item">Conta criada. Confira seu email para confirmar o cadastro.</div>`);
+        return;
+      }
+
+      if (selectedSignupRole === "company") {
+        const companyName = document.getElementById("signup_company_name").value.trim();
+        const companyCnpj = onlyDigits(document.getElementById("signup_company_cnpj").value);
+        const companyPhone = document.getElementById("signup_company_phone").value.trim();
+        const companyCity = document.getElementById("signup_company_city").value.trim();
+        const fullName = document.getElementById("signup_company_full_name").value.trim();
+
+        if (!companyName || !companyCnpj) {
+          setBox("signup_result", `<div class="item">Para imobiliária, preencha nome da imobiliária e CNPJ.</div>`);
+          return;
+        }
+
+        const { data: companyData, error: companyError } = await supabase
+          .from("imobix_companies")
+          .insert({
+            name: companyName,
+            cnpj: companyCnpj,
+            phone: companyPhone || null,
+            city: companyCity || null,
+            email: email
+          })
+          .select("*")
+          .single();
+
+        if (companyError) {
+          setBox("signup_result", `<div class="item">${companyError.message}</div>`);
+          return;
+        }
+
+        const { error: profileError } = await supabase
+          .from("imobix_users")
+          .insert({
+            company_id: companyData.id,
+            user_id: userId,
+            full_name: fullName || companyName,
+            phone: companyPhone || null,
+            role: "admin",
+            active: true
+          });
+
+        if (profileError) {
+          setBox("signup_result", `<div class="item">${profileError.message}</div>`);
+          return;
+        }
+
+        setBox("signup_result", `<div class="item">Conta de imobiliária criada com sucesso. Confira seu email para confirmar o cadastro.</div>`);
+        return;
+      }
+
+      if (selectedSignupRole === "broker") {
+        const fullName = document.getElementById("signup_broker_full_name").value.trim();
+        const phone = document.getElementById("signup_broker_phone").value.trim();
+        const creci = document.getElementById("signup_broker_creci").value.trim();
+        const creciState = document.getElementById("signup_broker_creci_state").value.trim();
+        const companyId = document.getElementById("signup_broker_company_id").value.trim();
+
+        if (!fullName || !creci) {
+          setBox("signup_result", `<div class="item">Para corretor, preencha nome completo e CRECI.</div>`);
+          return;
+        }
+
+        const { error: profileError } = await supabase
+          .from("imobix_users")
+          .insert({
+            company_id: companyId || null,
+            user_id: userId,
+            full_name: fullName,
+            phone: phone || null,
+            role: "broker",
+            creci: creci,
+            creci_state: creciState || null,
+            active: true
+          });
+
+        if (profileError) {
+          setBox("signup_result", `<div class="item">${profileError.message}</div>`);
+          return;
+        }
+
+        setBox("signup_result", `<div class="item">Conta de corretor criada com sucesso. Confira seu email para confirmar o cadastro.</div>`);
+        return;
+      }
+
+      if (selectedSignupRole === "client") {
+        const fullName = document.getElementById("signup_client_full_name").value.trim();
+        const phone = document.getElementById("signup_client_phone").value.trim();
+
+        if (!fullName) {
+          setBox("signup_result", `<div class="item">Para cliente, preencha seu nome completo.</div>`);
+          return;
+        }
+
+        const { error: profileError } = await supabase
+          .from("imobix_users")
+          .insert({
+            company_id: null,
+            user_id: userId,
+            full_name: fullName,
+            phone: phone || null,
+            role: "client",
+            active: true
+          });
+
+        if (profileError) {
+          setBox("signup_result", `<div class="item">${profileError.message}</div>`);
+          return;
+        }
+
+        setBox("signup_result", `<div class="item">Conta de cliente criada com sucesso. Confira seu email para confirmar o cadastro.</div>`);
+      }
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "./app.html";
+    }
+
+    async function createCompany() {
+      const name = document.getElementById("company_name").value.trim();
+      const cnpj = onlyDigits(document.getElementById("company_cnpj").value);
+      const phone = document.getElementById("company_phone").value.trim();
+      const city = document.getElementById("company_city").value.trim();
+      const email = document.getElementById("company_email").value.trim();
+      const fullName = document.getElementById("admin_full_name").value.trim();
+
+      setBox("company_result", "");
+
+      if (!name || !cnpj) {
+        setBox("company_result", `<div class="item">Informe o nome da imobiliária e o CNPJ.</div>`);
+        return;
+      }
+
+      const user = await getUser();
+      if (!user) {
+        setBox("company_result", `<div class="item">Usuário não encontrado.</div>`);
+        return;
+      }
+
+      const { data: companyData, error: companyError } = await supabase
+        .from("imobix_companies")
+        .insert({
+          name,
+          cnpj,
+          phone: phone || null,
+          city: city || null,
+          email: email || null
+        })
+        .select("*")
+        .single();
+
+      if (companyError) {
+        setBox("company_result", `<div class="item">${companyError.message}</div>`);
+        return;
+      }
+
+      const { error: userError } = await supabase
+        .from("imobix_users")
+        .insert({
+          company_id: companyData.id,
+          user_id: user.id,
+          full_name: fullName || name,
+          phone: phone || null,
+          role: "admin",
+          active: true
+        });
+
+      if (userError) {
+        setBox("company_result", `<div class="item">${userError.message}</div>`);
+        return;
+      }
+
+      setBox("company_result", `<div class="item">Imobiliária criada com sucesso.</div>`);
+      await bootstrap();
+    }
+
+    async function bootstrap() {
+      try {
+        bootStatus.textContent = "Carregando...";
+
+        const session = await getSession();
+
+        if (!session) {
+          showOnly(authScreen);
+          bootStatus.textContent = "";
+          return;
+        }
+
+        const user = await getUser();
+
+        if (!user) {
+          showOnly(authScreen);
+          bootStatus.textContent = "";
+          return;
+        }
+
+        const profile = await getProfile(user.id);
+
+        if (!profile) {
+          showOnly(setupScreen);
+          bootStatus.textContent = "";
+          return;
+        }
+
+        showOnly(appScreen);
+        bootStatus.textContent = "";
+        renderProfileInfo(profile, user);
+        renderRoleSummary(profile);
+        renderRoleActions(profile);
+      } catch (error) {
+        showOnly(authScreen);
+        bootStatus.textContent = "";
+        setBox("login_result", `<div class="item">${error.message || "Erro ao carregar a página."}</div>`);
+      }
+    }
+
+    document.querySelectorAll(".profile-option").forEach(el => {
+      el.addEventListener("click", () => setSignupRole(el.dataset.role));
+    });
+
+    document.getElementById("login_btn").addEventListener("click", login);
+    document.getElementById("signup_btn").addEventListener("click", signup);
+    document.getElementById("create_company_btn").addEventListener("click", createCompany);
+    document.getElementById("refresh_btn").addEventListener("click", bootstrap);
+    document.getElementById("logout_btn_1").addEventListener("click", logout);
+    document.getElementById("logout_btn_2").addEventListener("click", logout);
+
+    setSignupRole("company");
+    bootstrap();
+  </script>
 </body>
 </html>
