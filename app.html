@@ -15,12 +15,20 @@
       font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
+      min-height: 100vh;
     }
 
     .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
+    }
+
+    .auth-shell {
+      width: 100%;
+      max-width: 560px;
     }
 
     .topbar {
@@ -28,49 +36,110 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
     }
 
     .brand {
-      font-size: 28px;
+      font-size: 34px;
       font-weight: bold;
+      margin: 0;
     }
 
     .subtitle {
       color: #cbd5e1;
       font-size: 14px;
-      margin-top: 4px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      margin-top: 6px;
     }
 
     .card {
       background: #1e293b;
-      padding: 20px;
-      border-radius: 14px;
+      padding: 22px;
+      border-radius: 18px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      min-height: 46px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      background: #334155;
+      color: white;
+    }
+
+    .tab-btn.active {
+      background: #22c55e;
+      color: black;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+    }
+
+    .section-text {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
     }
 
-    .item {
+    .profile-option {
       background: #0b1220;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.06);
-      margin-top: 10px;
-      word-break: break-word;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s ease;
     }
 
-    input, select {
+    .profile-option.active {
+      background: #22c55e;
+      color: black;
+      border-color: #22c55e;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input,
+    select {
       width: 100%;
       border: none;
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 10px;
+      padding: 13px 14px;
       margin-top: 8px;
       margin-bottom: 10px;
       font-size: 15px;
@@ -78,7 +147,8 @@
       color: black;
     }
 
-    button, a.btn {
+    button,
+    a.btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -113,19 +183,28 @@
       border: 1px solid rgba(255,255,255,.16);
     }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+    .full {
+      width: 100%;
     }
 
-    .row > * {
-      flex: 1;
-      min-width: 140px;
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+      word-break: break-word;
     }
 
-    .hidden {
-      display: none;
+    .app-screen {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
     .badge {
@@ -139,158 +218,103 @@
       color: black;
     }
 
-    .hero {
-      min-height: calc(100vh - 40px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    @media (max-width: 700px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
 
-    .status-line {
-      color: #cbd5e1;
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-      margin-bottom: 14px;
-    }
-
-    .profile-option {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 14px;
-      cursor: pointer;
-      text-align: center;
-      font-weight: bold;
-      transition: .2s ease;
-    }
-
-    .profile-option.active {
-      background: #22c55e;
-      color: black;
-      border-color: #22c55e;
-    }
-
-    .small-text {
-      color: #cbd5e1;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    @media (max-width: 900px) {
       .grid {
         grid-template-columns: 1fr;
       }
 
       .brand {
-        font-size: 24px;
+        font-size: 28px;
       }
 
-      .hero {
-        min-height: auto;
-      }
-
-      .profile-grid {
-        grid-template-columns: 1fr;
+      .card {
+        padding: 18px;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div id="auth_screen">
-      <div class="hero">
-        <div style="width:100%;">
-          <div class="topbar">
-            <div>
-              <div class="brand">Imobia</div>
-              <div class="subtitle">Plataforma imobiliária inteligente</div>
-            </div>
+    <div id="auth_screen" class="auth-shell">
+      <div class="topbar">
+        <div>
+          <div class="brand">Imobia</div>
+          <div class="subtitle">Plataforma imobiliária inteligente</div>
+        </div>
 
-            <div class="row" style="max-width:220px;width:100%;">
-              <a class="btn ghost" href="./index.html">Portal</a>
-            </div>
+        <div>
+          <a class="btn ghost" href="./index.html">Portal</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tabs">
+          <button id="tab_login" class="tab-btn active">Entrar</button>
+          <button id="tab_signup" class="tab-btn">Criar conta</button>
+        </div>
+
+        <div id="login_panel">
+          <h2 class="section-title">Entrar</h2>
+          <p class="section-text">Acesse sua conta para entrar no sistema.</p>
+
+          <input id="login_email" type="email" placeholder="Email" />
+          <input id="login_password" type="password" placeholder="Senha" />
+
+          <button id="login_btn" class="primary full">Entrar</button>
+
+          <div id="login_result"></div>
+        </div>
+
+        <div id="signup_panel" class="hidden">
+          <h2 class="section-title">Criar conta</h2>
+          <p class="section-text">Escolha o perfil e preencha apenas os campos necessários.</p>
+
+          <div class="profile-grid">
+            <div class="profile-option active" data-role="company">Imobiliária</div>
+            <div class="profile-option" data-role="broker">Corretor</div>
+            <div class="profile-option" data-role="client">Cliente</div>
           </div>
 
-          <div class="grid">
-            <div class="card">
-              <h3 style="margin-top:0;">Entrar</h3>
-
-              <input id="login_email" type="email" placeholder="Email" />
-              <input id="login_password" type="password" placeholder="Senha" />
-
-              <button id="login_btn" class="primary" style="width:100%;">
-                Entrar
-              </button>
-
-              <div id="login_result"></div>
-            </div>
-
-            <div class="card">
-              <h3 style="margin-top:0;">Criar conta</h3>
-
-              <div class="small-text">
-                Escolha o perfil para mostrar apenas os campos necessários.
-              </div>
-
-              <div class="profile-grid">
-                <div class="profile-option active" data-role="company">
-                  Imobiliária
-                </div>
-                <div class="profile-option" data-role="broker">
-                  Corretor
-                </div>
-                <div class="profile-option" data-role="client">
-                  Cliente
-                </div>
-              </div>
-
-              <div id="signup_company_fields">
-                <input id="signup_company_name" placeholder="Nome da imobiliária" />
-                <input id="signup_company_cnpj" placeholder="CNPJ" />
-                <input id="signup_company_phone" placeholder="Telefone" />
-                <input id="signup_company_city" placeholder="Cidade" />
-                <input id="signup_company_full_name" placeholder="Seu nome completo" />
-              </div>
-
-              <div id="signup_broker_fields" class="hidden">
-                <input id="signup_broker_full_name" placeholder="Nome completo" />
-                <input id="signup_broker_phone" placeholder="Telefone" />
-                <div class="row">
-                  <input id="signup_broker_creci" placeholder="CRECI" />
-                  <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
-                </div>
-                <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
-              </div>
-
-              <div id="signup_client_fields" class="hidden">
-                <input id="signup_client_full_name" placeholder="Nome completo" />
-                <input id="signup_client_phone" placeholder="Telefone" />
-              </div>
-
-              <input id="signup_email" type="email" placeholder="Email" />
-              <input id="signup_password" type="password" placeholder="Senha" />
-
-              <button id="signup_btn" class="ghost" style="width:100%;">
-                Criar conta
-              </button>
-
-              <div id="signup_result"></div>
-            </div>
+          <div id="signup_company_fields">
+            <input id="signup_company_name" placeholder="Nome da imobiliária" />
+            <input id="signup_company_cnpj" placeholder="CNPJ" />
+            <input id="signup_company_phone" placeholder="Telefone" />
+            <input id="signup_company_city" placeholder="Cidade" />
+            <input id="signup_company_full_name" placeholder="Seu nome completo" />
           </div>
 
-          <div class="status-line" id="boot_status">Carregando...</div>
+          <div id="signup_broker_fields" class="hidden">
+            <input id="signup_broker_full_name" placeholder="Nome completo" />
+            <input id="signup_broker_phone" placeholder="Telefone" />
+
+            <div class="row">
+              <input id="signup_broker_creci" placeholder="CRECI" />
+              <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
+            </div>
+
+            <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
+          </div>
+
+          <div id="signup_client_fields" class="hidden">
+            <input id="signup_client_full_name" placeholder="Nome completo" />
+            <input id="signup_client_phone" placeholder="Telefone" />
+          </div>
+
+          <input id="signup_email" type="email" placeholder="Email" />
+          <input id="signup_password" type="password" placeholder="Senha" />
+
+          <button id="signup_btn" class="primary full">Criar conta</button>
+
+          <div id="signup_result"></div>
         </div>
       </div>
     </div>
 
-    <div id="company_setup_screen" class="hidden">
+    <div id="company_setup_screen" class="app-screen hidden">
       <div class="topbar">
         <div>
           <div class="brand">Imobia</div>
@@ -321,7 +345,7 @@
       </div>
     </div>
 
-    <div id="app_screen" class="hidden">
+    <div id="app_screen" class="app-screen hidden">
       <div class="topbar">
         <div>
           <div class="brand">Imobia</div>
@@ -377,7 +401,11 @@
     const authScreen = document.getElementById("auth_screen");
     const setupScreen = document.getElementById("company_setup_screen");
     const appScreen = document.getElementById("app_screen");
-    const bootStatus = document.getElementById("boot_status");
+
+    const loginPanel = document.getElementById("login_panel");
+    const signupPanel = document.getElementById("signup_panel");
+    const tabLogin = document.getElementById("tab_login");
+    const tabSignup = document.getElementById("tab_signup");
 
     let selectedSignupRole = "company";
 
@@ -394,6 +422,21 @@
 
     function onlyDigits(value) {
       return String(value || "").replace(/\D/g, "");
+    }
+
+    function showTab(tab) {
+      if (tab === "login") {
+        loginPanel.classList.remove("hidden");
+        signupPanel.classList.add("hidden");
+        tabLogin.classList.add("active");
+        tabSignup.classList.remove("active");
+        return;
+      }
+
+      loginPanel.classList.add("hidden");
+      signupPanel.classList.remove("hidden");
+      tabLogin.classList.remove("active");
+      tabSignup.classList.add("active");
     }
 
     function setSignupRole(role) {
@@ -429,10 +472,7 @@
         .limit(1)
         .maybeSingle();
 
-      if (error) {
-        return null;
-      }
-
+      if (error) return null;
       return data || null;
     }
 
@@ -781,13 +821,10 @@
 
     async function bootstrap() {
       try {
-        bootStatus.textContent = "Carregando...";
-
         const session = await getSession();
 
         if (!session) {
           showOnly(authScreen);
-          bootStatus.textContent = "";
           return;
         }
 
@@ -795,7 +832,6 @@
 
         if (!user) {
           showOnly(authScreen);
-          bootStatus.textContent = "";
           return;
         }
 
@@ -803,21 +839,21 @@
 
         if (!profile) {
           showOnly(setupScreen);
-          bootStatus.textContent = "";
           return;
         }
 
         showOnly(appScreen);
-        bootStatus.textContent = "";
         renderProfileInfo(profile, user);
         renderRoleSummary(profile);
         renderRoleActions(profile);
       } catch (error) {
         showOnly(authScreen);
-        bootStatus.textContent = "";
         setBox("login_result", `<div class="item">${error.message || "Erro ao carregar a página."}</div>`);
       }
     }
+
+    tabLogin.addEventListener("click", () => showTab("login"));
+    tabSignup.addEventListener("click", () => showTab("signup"));
 
     document.querySelectorAll(".profile-option").forEach(el => {
       el.addEventListener("click", () => setSignupRole(el.dataset.role));
@@ -831,6 +867,7 @@
     document.getElementById("logout_btn_2").addEventListener("click", logout);
 
     setSignupRole("company");
+    showTab("login");
     bootstrap();
   </script>
 </body>
