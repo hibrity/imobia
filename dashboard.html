@@ -5,17 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Imobia • Dashboard</title>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    window.supabase = createClient(
-      "https://bcfjciljugeascgyokxa.supabase.co",
-      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-    );
-  </script>
-
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -27,7 +20,7 @@
     .wrap {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 18px;
     }
 
     .topbar {
@@ -50,45 +43,79 @@
       margin-top: 4px;
     }
 
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     .card {
       background: #1e293b;
       padding: 18px;
-      border-radius: 14px;
+      border-radius: 16px;
       margin-bottom: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,.18);
-    }
-
-    .item {
-      background: #0b1220;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.06);
-      margin-top: 10px;
-    }
-
-    .stats {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .stat {
-      background: #0b1220;
-      border-radius: 12px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .stat strong {
-      display: block;
-      margin-top: 6px;
-      font-size: 24px;
     }
 
     .grid {
       display: grid;
       gap: 16px;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mini-grid {
+      display: grid;
+      gap: 12px;
       grid-template-columns: 1fr 1fr;
+    }
+
+    .stat {
+      background: #0b1220;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat-label {
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .stat-sub {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .section-title {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .list-empty {
+      color: #cbd5e1;
+      font-size: 14px;
     }
 
     .row {
@@ -106,13 +133,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
+      min-height: 42px;
       padding: 10px 14px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 14px;
       text-decoration: none;
     }
 
@@ -131,6 +158,11 @@
       color: white;
     }
 
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
     .badge {
       display: inline-block;
       padding: 4px 8px;
@@ -145,29 +177,38 @@
     .muted {
       color: #cbd5e1;
       font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
     }
 
     .hidden {
       display: none;
     }
 
-    @media (max-width: 980px) {
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       .grid {
         grid-template-columns: 1fr;
       }
+    }
 
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 700px) {
+      .stats-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
       }
 
       .brand {
         font-size: 24px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .stats {
-        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -180,66 +221,158 @@
         <div class="subtitle" id="page_subtitle">Carregando dashboard...</div>
       </div>
 
-      <div class="row" style="max-width:420px;width:100%;">
+      <div class="top-actions">
         <a class="btn ghost" href="./index.html">Portal</a>
-        <a class="btn ghost" href="./app.html">Conta</a>
-        <button class="ghost" onclick="loadDashboard()">Atualizar</button>
+        <a class="btn ghost" href="./imoveis.html">Imóveis</a>
+        <a class="btn ghost" href="./clientes.html">Clientes</a>
+        <a class="btn ghost" href="./corretores.html">Corretores</a>
+        <a class="btn ghost" href="./captacoes.html">Captações</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
         <button class="danger" onclick="logout()">Sair</button>
       </div>
     </div>
 
-    <div class="card">
-      <h3 style="margin-top:0;">Resumo</h3>
-      <div class="stats" id="stats"></div>
-    </div>
-
-    <div class="grid">
-      <div>
-        <div class="card">
-          <h3 style="margin-top:0;">Meu perfil</h3>
-          <div id="profile_info" class="item">Carregando...</div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0;">Ações rápidas</h3>
-          <div id="quick_actions"></div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <h3 style="margin-top:0;">Atividade principal</h3>
-          <div id="activity_box" class="item">Carregando...</div>
-        </div>
+    <div id="access_warning" class="card hidden">
+      <h2 class="section-title">Acesso restrito</h2>
+      <div class="item">
+        Esta dashboard é destinada à imobiliária e ao corretor. Clientes usam a área do cliente.
       </div>
     </div>
 
-    <div class="grid">
+    <div id="dashboard_content" class="hidden">
       <div class="card">
-        <h3 style="margin-top:0;">Imóveis</h3>
-        <div id="properties_list">Carregando...</div>
+        <h2 class="section-title">Visão geral</h2>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Corretores</div>
+            <div class="stat-value" id="stat_brokers">0</div>
+            <div class="stat-sub">Equipe ativa</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Clientes</div>
+            <div class="stat-value" id="stat_clients">0</div>
+            <div class="stat-sub">Base total</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Clientes ativos</div>
+            <div class="stat-value" id="stat_active_clients">0</div>
+            <div class="stat-sub">Com interesse/visita</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Imóveis</div>
+            <div class="stat-value" id="stat_properties">0</div>
+            <div class="stat-sub">Carteira total</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Imóveis vendidos</div>
+            <div class="stat-value" id="stat_sold">0</div>
+            <div class="stat-sub">Status vendido</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Imóveis alugados</div>
+            <div class="stat-value" id="stat_rented">0</div>
+            <div class="stat-sub">Status alugado</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Captações pendentes</div>
+            <div class="stat-value" id="stat_submissions_pending">0</div>
+            <div class="stat-sub">Aguardando análise</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Contratos pendentes</div>
+            <div class="stat-value" id="stat_contracts_pending">0</div>
+            <div class="stat-sub">Estimativa operacional</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <a class="btn primary" href="./imoveis.html">Gerenciar imóveis</a>
+          <a class="btn ghost" href="./clientes.html">Gerenciar clientes</a>
+          <a class="btn ghost" href="./visitas.html">Ver visitas</a>
+          <a class="btn warning" href="./imobia-ai.html">Abrir IA</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h2 class="section-title">Últimas vendas e locações</h2>
+            <div id="sales_list" class="list-empty">Carregando...</div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Captações pendentes</h2>
+            <div id="submissions_list" class="list-empty">Carregando...</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 class="section-title">Últimos clientes</h2>
+            <div id="clients_list" class="list-empty">Carregando...</div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Visitas agendadas</h2>
+            <div id="visits_list" class="list-empty">Carregando...</div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3 style="margin-top:0;">Captações</h3>
-        <div id="submissions_list">Carregando...</div>
-      </div>
-    </div>
+        <h2 class="section-title">Dados técnicos</h2>
 
-    <div class="grid">
-      <div class="card">
-        <h3 style="margin-top:0;">Clientes</h3>
-        <div id="clients_list">Carregando...</div>
-      </div>
+        <div class="mini-grid">
+          <div class="item">
+            <b>Corretores ativos</b><br>
+            <span id="tech_brokers">0</span>
+          </div>
 
-      <div class="card">
-        <h3 style="margin-top:0;">Visitas</h3>
-        <div id="visits_list">Carregando...</div>
+          <div class="item">
+            <b>Clientes com interesse</b><br>
+            <span id="tech_interest_clients">0</span>
+          </div>
+
+          <div class="item">
+            <b>Imóveis disponíveis</b><br>
+            <span id="tech_available_properties">0</span>
+          </div>
+
+          <div class="item">
+            <b>Visitas futuras</b><br>
+            <span id="tech_future_visits">0</span>
+          </div>
+
+          <div class="item">
+            <b>Leads gerados</b><br>
+            <span id="tech_leads">0</span>
+          </div>
+
+          <div class="item">
+            <b>Captações aprovadas</b><br>
+            <span id="tech_submissions_approved">0</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+
     let currentUser = null;
     let currentProfile = null;
 
@@ -259,16 +392,15 @@
     }
 
     async function getProfile() {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("imobix_users")
-        .select("*, imobix_companies(name, phone, email)")
+        .select("*, imobix_companies(name)")
         .eq("user_id", currentUser.id)
         .eq("active", true)
         .limit(1)
         .maybeSingle();
 
-      if (error || !data) return null;
-      return data;
+      return data || null;
     }
 
     function roleLabel(role) {
@@ -279,464 +411,218 @@
       return role || "-";
     }
 
-    function renderProfile() {
-      const box = document.getElementById("profile_info");
-      const companyName = currentProfile.imobix_companies?.name || "-";
-
-      box.innerHTML = `
-        <b>${currentProfile.full_name || currentUser.email}</b><br>
-        Email: ${currentUser.email}<br>
-        Perfil: ${roleLabel(currentProfile.role)}<br>
-        Imobiliária: ${companyName}<br>
-        <span class="badge">Ativo</span>
-      `;
-
-      document.getElementById("page_subtitle").textContent =
-        `${companyName} • ${roleLabel(currentProfile.role)}`;
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
     }
 
-    function renderQuickActions() {
-      const box = document.getElementById("quick_actions");
-      const role = currentProfile.role;
-
-      if (role === "admin") {
-        box.innerHTML = `
-          <div class="row">
-            <a class="btn primary" href="./imoveis.html">Gerenciar imóveis</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <a class="btn ghost" href="./corretores.html">Corretores</a>
-            <a class="btn ghost" href="./visitas.html">Visitas</a>
-          </div>
-        `;
-        return;
-      }
-
-      if (role === "broker") {
-        box.innerHTML = `
-          <div class="row">
-            <a class="btn primary" href="./clientes.html">Meus clientes</a>
-            <a class="btn ghost" href="./visitas.html">Minhas visitas</a>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <a class="btn ghost" href="./imoveis.html">Meus imóveis</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
-          </div>
-        `;
-        return;
-      }
-
-      if (role === "client") {
-        box.innerHTML = `
-          <div class="row">
-            <a class="btn primary" href="./index.html">Buscar imóveis</a>
-            <a class="btn ghost" href="./cliente-home.html">Minha área</a>
-          </div>
-        `;
-        return;
-      }
-
-      if (role === "owner") {
-        box.innerHTML = `
-          <div class="row">
-            <a class="btn primary" href="./anunciar.html">Anunciar imóvel</a>
-            <a class="btn ghost" href="./meus-imoveis.html">Minhas captações</a>
-          </div>
-        `;
-        return;
-      }
-
-      box.innerHTML = `<div class="item">Sem ações disponíveis.</div>`;
+    function propertyTypeLabel(v) {
+      if (v === "house") return "Casa";
+      if (v === "apartment") return "Apartamento";
+      if (v === "land") return "Terreno";
+      if (v === "commercial") return "Comercial";
+      return v || "-";
     }
 
-    function renderStats(data) {
-      document.getElementById("stats").innerHTML = `
-        <div class="stat">
-          Imóveis
-          <strong>${data.properties}</strong>
-        </div>
-        <div class="stat">
-          Captações
-          <strong>${data.submissions}</strong>
-        </div>
-        <div class="stat">
-          Clientes
-          <strong>${data.clients}</strong>
-        </div>
-        <div class="stat">
-          Visitas
-          <strong>${data.visits}</strong>
-        </div>
-      `;
+    function statusLabel(v) {
+      if (v === "available") return "Disponível";
+      if (v === "reserved") return "Reservado";
+      if (v === "sold") return "Vendido";
+      if (v === "rented") return "Alugado";
+      return v || "-";
     }
 
-    function renderActivity(text) {
-      document.getElementById("activity_box").innerHTML = text;
+    function submissionStatusLabel(v) {
+      if (v === "pending") return "Pendente";
+      if (v === "in_review") return "Em análise";
+      if (v === "approved") return "Aprovado";
+      if (v === "rejected") return "Rejeitado";
+      return v || "-";
     }
 
-    function renderList(targetId, items, mapper, emptyText) {
-      const box = document.getElementById(targetId);
+    function interestLabel(v) {
+      if (v === "buy") return "Compra";
+      if (v === "rent") return "Aluguel";
+      if (v === "investment") return "Investimento";
+      return v || "-";
+    }
+
+    function visitStatusLabel(v) {
+      if (v === "scheduled") return "Agendada";
+      if (v === "confirmed") return "Confirmada";
+      if (v === "completed") return "Realizada";
+      if (v === "cancelled") return "Cancelada";
+      return v || "-";
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function renderSimpleList(id, items, mapper) {
+      const box = document.getElementById(id);
 
       if (!items || !items.length) {
-        box.innerHTML = `<div class="item">${emptyText}</div>`;
+        box.innerHTML = `<div class="item">Nenhum registro encontrado.</div>`;
         return;
       }
 
       box.innerHTML = items.map(mapper).join("");
     }
 
-    async function loadAdminData() {
+    async function loadDashboardData() {
       const companyId = currentProfile.company_id;
 
-      const propertiesRes = await supabase
+      const usersQuery = supabase
+        .from("imobix_users")
+        .select("*")
+        .eq("company_id", companyId);
+
+      const propertiesQuery = supabase
         .from("properties")
-        .select("*", { count: "exact" })
+        .select("*")
         .eq("company_id", companyId);
 
-      const submissionsRes = await supabase
-        .from("property_submissions")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId);
-
-      const clientsRes = await supabase
-        .from("property_clients")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId);
-
-      const visitsRes = await supabase
-        .from("property_visits")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId);
-
-      renderStats({
-        properties: propertiesRes.count || 0,
-        submissions: submissionsRes.count || 0,
-        clients: clientsRes.count || 0,
-        visits: visitsRes.count || 0
-      });
-
-      renderActivity(`
-        <b>Visão do administrador</b><br>
-        Acompanhe imóveis, captações, clientes, visitas e a operação da imobiliária.
-      `);
-
-      renderList(
-        "properties_list",
-        (propertiesRes.data || []).slice(0, 8),
-        p => `
-          <div class="item">
-            <b>${p.title}</b><br>
-            ${p.city || "-"} • ${p.property_type}<br>
-            Preço: ${p.price ?? "-"}<br>
-            <span class="badge">${p.status}</span>
-          </div>
-        `,
-        "Nenhum imóvel cadastrado."
-      );
-
-      renderList(
-        "submissions_list",
-        (submissionsRes.data || []).slice(0, 8),
-        s => `
-          <div class="item">
-            <b>${s.title}</b><br>
-            ${s.city || "-"} • ${s.property_type}<br>
-            Proprietário: ${s.owner_name || "-"}<br>
-            <span class="badge">${s.status}</span>
-          </div>
-        `,
-        "Nenhuma captação recebida."
-      );
-
-      renderList(
-        "clients_list",
-        (clientsRes.data || []).slice(0, 8),
-        c => `
-          <div class="item">
-            <b>${c.full_name}</b><br>
-            ${c.phone || "-"}<br>
-            Interesse: ${c.interest_type || "-"}
-          </div>
-        `,
-        "Nenhum cliente cadastrado."
-      );
-
-      renderList(
-        "visits_list",
-        (visitsRes.data || []).slice(0, 8),
-        v => `
-          <div class="item">
-            <b>Visita agendada</b><br>
-            Data: ${new Date(v.visit_date).toLocaleString("pt-BR")}<br>
-            <span class="badge">${v.status}</span>
-          </div>
-        `,
-        "Nenhuma visita cadastrada."
-      );
-    }
-
-    async function loadBrokerData() {
-      const companyId = currentProfile.company_id;
-
-      const propertiesRes = await supabase
-        .from("properties")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("broker_user_id", currentUser.id);
-
-      const submissionsRes = await supabase
-        .from("property_submissions")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("assigned_broker_user_id", currentUser.id);
-
-      const clientsRes = await supabase
-        .from("property_clients")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("assigned_broker_user_id", currentUser.id);
-
-      const visitsRes = await supabase
-        .from("property_visits")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("broker_user_id", currentUser.id);
-
-      renderStats({
-        properties: propertiesRes.count || 0,
-        submissions: submissionsRes.count || 0,
-        clients: clientsRes.count || 0,
-        visits: visitsRes.count || 0
-      });
-
-      renderActivity(`
-        <b>Visão do corretor</b><br>
-        Aqui você acompanha seus imóveis, clientes, visitas e captações atribuídas.
-      `);
-
-      renderList(
-        "properties_list",
-        (propertiesRes.data || []).slice(0, 8),
-        p => `
-          <div class="item">
-            <b>${p.title}</b><br>
-            ${p.city || "-"} • ${p.property_type}<br>
-            Preço: ${p.price ?? "-"}<br>
-            <span class="badge">${p.status}</span>
-          </div>
-        `,
-        "Nenhum imóvel atribuído a você."
-      );
-
-      renderList(
-        "submissions_list",
-        (submissionsRes.data || []).slice(0, 8),
-        s => `
-          <div class="item">
-            <b>${s.title}</b><br>
-            ${s.city || "-"} • ${s.property_type}<br>
-            Status: <span class="badge">${s.status}</span>
-          </div>
-        `,
-        "Nenhuma captação atribuída."
-      );
-
-      renderList(
-        "clients_list",
-        (clientsRes.data || []).slice(0, 8),
-        c => `
-          <div class="item">
-            <b>${c.full_name}</b><br>
-            ${c.phone || "-"}<br>
-            Interesse: ${c.interest_type || "-"}
-          </div>
-        `,
-        "Nenhum cliente atribuído."
-      );
-
-      renderList(
-        "visits_list",
-        (visitsRes.data || []).slice(0, 8),
-        v => `
-          <div class="item">
-            <b>Visita</b><br>
-            ${new Date(v.visit_date).toLocaleString("pt-BR")}<br>
-            <span class="badge">${v.status}</span>
-          </div>
-        `,
-        "Nenhuma visita atribuída."
-      );
-    }
-
-    async function loadClientData() {
-      const companyId = currentProfile.company_id;
-
-      const interestRes = await supabase
-        .from("property_interest")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("client_user_id", currentUser.id);
-
-      const clientRecordRes = await supabase
+      const clientsQuery = supabase
         .from("property_clients")
         .select("*")
-        .eq("company_id", companyId)
-        .eq("user_id", currentUser.id)
-        .limit(1)
-        .maybeSingle();
+        .eq("company_id", companyId);
 
-      let visitsRes = { data: [], count: 0 };
-      if (clientRecordRes.data?.id) {
-        visitsRes = await supabase
-          .from("property_visits")
-          .select("*", { count: "exact" })
-          .eq("company_id", companyId)
-          .eq("client_id", clientRecordRes.data.id);
-      }
+      const visitsQuery = supabase
+        .from("property_visits")
+        .select("*")
+        .eq("company_id", companyId);
 
-      const publicPropertiesRes = await supabase
-        .from("properties")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("is_public", true);
-
-      renderStats({
-        properties: publicPropertiesRes.count || 0,
-        submissions: interestRes.count || 0,
-        clients: clientRecordRes.data ? 1 : 0,
-        visits: visitsRes.count || 0
-      });
-
-      renderActivity(`
-        <b>Visão do cliente</b><br>
-        Busque imóveis, acompanhe seus interesses e veja visitas agendadas.
-      `);
-
-      renderList(
-        "properties_list",
-        (publicPropertiesRes.data || []).slice(0, 8),
-        p => `
-          <div class="item">
-            <b>${p.title}</b><br>
-            ${p.city || "-"} • ${p.property_type}<br>
-            Preço: ${p.price ?? "-"}<br>
-            <span class="badge">${p.status}</span>
-          </div>
-        `,
-        "Nenhum imóvel público disponível."
-      );
-
-      renderList(
-        "submissions_list",
-        (interestRes.data || []).slice(0, 8),
-        i => `
-          <div class="item">
-            <b>Interesse enviado</b><br>
-            Status: ${i.status}<br>
-            ${i.message || ""}
-          </div>
-        `,
-        "Você ainda não demonstrou interesse em imóveis."
-      );
-
-      renderList(
-        "clients_list",
-        clientRecordRes.data ? [clientRecordRes.data] : [],
-        c => `
-          <div class="item">
-            <b>${c.full_name}</b><br>
-            ${c.phone || "-"}<br>
-            Interesse: ${c.interest_type || "-"}
-          </div>
-        `,
-        "Seu cadastro de cliente ainda não foi criado."
-      );
-
-      renderList(
-        "visits_list",
-        (visitsRes.data || []).slice(0, 8),
-        v => `
-          <div class="item">
-            <b>Visita</b><br>
-            ${new Date(v.visit_date).toLocaleString("pt-BR")}<br>
-            <span class="badge">${v.status}</span>
-          </div>
-        `,
-        "Nenhuma visita agendada para você."
-      );
-    }
-
-    async function loadOwnerData() {
-      const companyId = currentProfile.company_id;
-
-      const submissionsRes = await supabase
+      const submissionsQuery = supabase
         .from("property_submissions")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("owner_user_id", currentUser.id);
+        .select("*")
+        .eq("company_id", companyId);
 
-      const propertiesRes = await supabase
-        .from("properties")
-        .select("*", { count: "exact" })
-        .eq("company_id", companyId)
-        .eq("owner_user_id", currentUser.id);
+      const interestsQuery = supabase
+        .from("property_interest")
+        .select("*")
+        .eq("company_id", companyId);
 
-      renderStats({
-        properties: propertiesRes.count || 0,
-        submissions: submissionsRes.count || 0,
-        clients: 0,
-        visits: 0
+      const [
+        usersRes,
+        propertiesRes,
+        clientsRes,
+        visitsRes,
+        submissionsRes,
+        interestsRes
+      ] = await Promise.all([
+        usersQuery,
+        propertiesQuery,
+        clientsQuery,
+        visitsQuery,
+        submissionsQuery,
+        interestsQuery
+      ]);
+
+      const users = usersRes.data || [];
+      const properties = propertiesRes.data || [];
+      const clients = clientsRes.data || [];
+      const visits = visitsRes.data || [];
+      const submissions = submissionsRes.data || [];
+      const interests = interestsRes.data || [];
+
+      const brokers = users.filter(u => u.role === "broker" && u.active);
+      const soldProperties = properties.filter(p => p.status === "sold");
+      const rentedProperties = properties.filter(p => p.status === "rented");
+      const availableProperties = properties.filter(p => p.status === "available");
+      const pendingSubmissions = submissions.filter(s => s.status === "pending");
+      const approvedSubmissions = submissions.filter(s => s.status === "approved");
+
+      const activeClientIds = new Set([
+        ...interests.map(i => i.client_user_id).filter(Boolean),
+        ...visits.map(v => v.client_id).filter(Boolean)
+      ]);
+
+      const activeClients = clients.filter(c => activeClientIds.has(c.id));
+
+      const futureVisits = visits.filter(v => {
+        if (!v.visit_date) return false;
+        return new Date(v.visit_date) > new Date();
       });
 
-      renderActivity(`
-        <b>Visão do proprietário</b><br>
-        Aqui você acompanha seus imóveis enviados e os anúncios já aprovados pela imobiliária.
+      const completedContractsEstimate = soldProperties.length + rentedProperties.length;
+      const contractsPendingEstimate = Math.max(0, interests.length - completedContractsEstimate);
+
+      setText("stat_brokers", brokers.length);
+      setText("stat_clients", clients.length);
+      setText("stat_active_clients", activeClients.length);
+      setText("stat_properties", properties.length);
+      setText("stat_sold", soldProperties.length);
+      setText("stat_rented", rentedProperties.length);
+      setText("stat_submissions_pending", pendingSubmissions.length);
+      setText("stat_contracts_pending", contractsPendingEstimate);
+
+      setText("tech_brokers", brokers.length);
+      setText("tech_interest_clients", activeClients.length);
+      setText("tech_available_properties", availableProperties.length);
+      setText("tech_future_visits", futureVisits.length);
+      setText("tech_leads", interests.length);
+      setText("tech_submissions_approved", approvedSubmissions.length);
+
+      const latestSales = [...properties]
+        .filter(p => p.status === "sold" || p.status === "rented")
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+        .slice(0, 6);
+
+      const latestClients = [...clients]
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+        .slice(0, 6);
+
+      const latestSubmissions = [...submissions]
+        .filter(s => s.status === "pending" || s.status === "in_review")
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+        .slice(0, 6);
+
+      const latestVisits = [...visits]
+        .sort((a, b) => new Date(b.visit_date || 0) - new Date(a.visit_date || 0))
+        .slice(0, 6);
+
+      renderSimpleList("sales_list", latestSales, item => `
+        <div class="item">
+          <b>${item.title || "Imóvel"}</b><br>
+          ${propertyTypeLabel(item.property_type)} • ${statusLabel(item.status)}<br>
+          ${item.city || "-"}${item.neighborhood ? " • " + item.neighborhood : ""}<br>
+          Valor: ${formatMoney(item.price)}
+        </div>
       `);
 
-      renderList(
-        "properties_list",
-        (propertiesRes.data || []).slice(0, 8),
-        p => `
-          <div class="item">
-            <b>${p.title}</b><br>
-            ${p.city || "-"} • ${p.property_type}<br>
-            Preço: ${p.price ?? "-"}<br>
-            <span class="badge">${p.status}</span>
-          </div>
-        `,
-        "Nenhum imóvel oficial vinculado ao seu usuário."
-      );
+      renderSimpleList("clients_list", latestClients, item => `
+        <div class="item">
+          <b>${item.full_name || "Cliente"}</b><br>
+          Interesse: ${interestLabel(item.interest_type)}<br>
+          Email: ${item.email || "-"}<br>
+          Telefone: ${item.phone || "-"}
+        </div>
+      `);
 
-      renderList(
-        "submissions_list",
-        (submissionsRes.data || []).slice(0, 8),
-        s => `
-          <div class="item">
-            <b>${s.title}</b><br>
-            ${s.city || "-"} • ${s.property_type}<br>
-            <span class="badge">${s.status}</span>
-          </div>
-        `,
-        "Nenhuma captação enviada."
-      );
+      renderSimpleList("submissions_list", latestSubmissions, item => `
+        <div class="item">
+          <b>${item.title || "Captação"}</b><br>
+          ${item.city || "-"}${item.neighborhood ? " • " + item.neighborhood : ""}<br>
+          Proprietário: ${item.owner_name || "-"}<br>
+          Status: ${submissionStatusLabel(item.status)}
+        </div>
+      `);
 
-      renderList(
-        "clients_list",
-        [],
-        () => "",
-        "Esta área não se aplica ao perfil de proprietário."
-      );
-
-      renderList(
-        "visits_list",
-        [],
-        () => "",
-        "As visitas do proprietário são acompanhadas pela imobiliária."
-      );
+      renderSimpleList("visits_list", latestVisits, item => `
+        <div class="item">
+          <b>Visita</b><br>
+          Data: ${item.visit_date ? new Date(item.visit_date).toLocaleString("pt-BR") : "-"}<br>
+          Status: ${visitStatusLabel(item.status)}<br>
+          ${item.notes || ""}
+        </div>
+      `);
     }
 
-    async function loadDashboard() {
+    async function loadPage() {
       const session = await getSession();
 
       if (!session) {
@@ -752,36 +638,25 @@
         return;
       }
 
-      renderProfile();
-      renderQuickActions();
-
-      if (currentProfile.role === "admin") {
-        await loadAdminData();
-        return;
-      }
-
-      if (currentProfile.role === "broker") {
-        await loadBrokerData();
-        return;
-      }
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Dashboard`;
 
       if (currentProfile.role === "client") {
-        await loadClientData();
+        document.getElementById("access_warning").classList.remove("hidden");
+        document.getElementById("dashboard_content").classList.add("hidden");
         return;
       }
 
-      if (currentProfile.role === "owner") {
-        await loadOwnerData();
-        return;
-      }
+      document.getElementById("access_warning").classList.add("hidden");
+      document.getElementById("dashboard_content").classList.remove("hidden");
 
-      renderActivity("Perfil sem dashboard definido.");
+      await loadDashboardData();
     }
 
-    loadDashboard();
+    loadPage();
 
     window.logout = logout;
-    window.loadDashboard = loadDashboard;
+    window.loadPage = loadPage;
   </script>
 </body>
 </html>
