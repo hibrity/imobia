@@ -1,575 +1,219 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Imobia • Acesso</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<title>Imobia • Acesso</title>
 
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
+window.supabase = createClient(
+  "https://bcfjciljugeascgyokxa.supabase.co",
+  "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+);
+</script>
 
-    .brand {
-      font-size: 28px;
-      font-weight: bold;
-    }
+<style>
 
-    .subtitle {
-      color: #cbd5e1;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
+.wrap{
+max-width:420px;
+margin:auto;
+padding:30px;
+}
 
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
-    }
+.card{
+background:#1e293b;
+padding:24px;
+border-radius:12px;
+margin-bottom:20px;
+}
 
-    .item {
-      background: #0b1220;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.06);
-      margin-top: 10px;
-      word-break: break-word;
-    }
+h2{
+margin-top:0;
+}
 
-    input, select {
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 8px;
-      margin-bottom: 10px;
-      font-size: 15px;
-      background: white;
-      color: black;
-    }
+input{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
+border:none;
+border-radius:8px;
+}
 
-    button, a.btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 15px;
-      text-decoration: none;
-    }
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
 
-    .primary {
-      background: #22c55e;
-      color: black;
-    }
+.primary{
+background:#22c55e;
+color:black;
+}
 
-    .ghost {
-      background: #334155;
-      color: white;
-    }
+.ghost{
+background:#334155;
+color:white;
+}
 
-    .danger {
-      background: #ef4444;
-      color: white;
-    }
+.item{
+background:#0b1220;
+padding:10px;
+border-radius:8px;
+margin-top:10px;
+}
 
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+.center{
+text-align:center;
+}
 
-    .row > * {
-      flex: 1;
-      min-width: 140px;
-    }
+a{
+color:#22c55e;
+cursor:pointer;
+}
 
-    .hidden {
-      display: none;
-    }
+.hidden{
+display:none;
+}
 
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-top: 6px;
-      background: #22c55e;
-      color: black;
-    }
+</style>
 
-    .hero {
-      min-height: calc(100vh - 40px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .status-line {
-      color: #cbd5e1;
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .brand {
-        font-size: 24px;
-      }
-
-      .hero {
-        min-height: auto;
-      }
-    }
-  </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div id="auth_screen">
-      <div class="hero">
-        <div style="width:100%;">
-          <div class="topbar">
-            <div>
-              <div class="brand">Imobia</div>
-              <div class="subtitle">Plataforma imobiliária inteligente</div>
-            </div>
-
-            <div class="row" style="max-width:220px;width:100%;">
-              <a class="btn ghost" href="./index.html">Portal</a>
-            </div>
-          </div>
-
-          <div class="grid">
-            <div class="card">
-              <h3 style="margin-top:0;">Entrar</h3>
-
-              <input id="login_email" type="email" placeholder="Email" />
-              <input id="login_password" type="password" placeholder="Senha" />
-
-              <button id="login_btn" class="primary" style="width:100%;">
-                Entrar
-              </button>
-
-              <div id="login_result"></div>
-            </div>
-
-            <div class="card">
-              <h3 style="margin-top:0;">Criar conta</h3>
-
-              <input id="signup_email" type="email" placeholder="Email" />
-              <input id="signup_password" type="password" placeholder="Senha" />
-
-              <button id="signup_btn" class="ghost" style="width:100%;">
-                Criar conta
-              </button>
-
-              <div id="signup_result"></div>
-            </div>
-          </div>
-
-          <div class="status-line" id="boot_status">Carregando...</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="company_setup_screen" class="hidden">
-      <div class="topbar">
-        <div>
-          <div class="brand">Imobia</div>
-          <div class="subtitle">Criar imobiliária</div>
-        </div>
-
-        <div class="row" style="max-width:220px;width:100%;">
-          <a class="btn ghost" href="./index.html">Portal</a>
-          <button id="logout_btn_1" class="danger">Sair</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0;">Nova imobiliária</h3>
-
-        <input id="company_name" placeholder="Nome da imobiliária" />
-        <input id="company_phone" placeholder="Telefone" />
-        <input id="company_email" placeholder="Email da imobiliária" />
-        <input id="admin_full_name" placeholder="Seu nome completo" />
-
-        <button id="create_company_btn" class="primary">
-          Criar imobiliária
-        </button>
-
-        <div id="company_result"></div>
-      </div>
-    </div>
-
-    <div id="app_screen" class="hidden">
-      <div class="topbar">
-        <div>
-          <div class="brand">Imobia</div>
-          <div class="subtitle" id="app_subtitle">Carregando perfil...</div>
-        </div>
-
-        <div class="row" style="max-width:320px;width:100%;">
-          <a class="btn ghost" href="./index.html">Portal</a>
-          <button id="refresh_btn" class="ghost">Atualizar</button>
-          <button id="logout_btn_2" class="danger">Sair</button>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div>
-          <div class="card">
-            <h3 style="margin-top:0;">Minha conta</h3>
-            <div id="profile_info" class="item">Carregando...</div>
-          </div>
-
-          <div class="card">
-            <h3 style="margin-top:0;">Entrar no sistema</h3>
-            <div id="role_actions"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="card">
-            <h3 style="margin-top:0;">Funções do seu perfil</h3>
-            <div id="role_summary" class="item">Carregando...</div>
-          </div>
-
-          <div class="card">
-            <h3 style="margin-top:0;">Atalhos</h3>
-            <div class="row">
-              <a class="btn ghost" href="./index.html">Portal público</a>
-              <a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    const supabase = createClient(
-      "https://bcfjciljugeascgyokxa.supabase.co",
-      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-    );
-
-    const authScreen = document.getElementById("auth_screen");
-    const setupScreen = document.getElementById("company_setup_screen");
-    const appScreen = document.getElementById("app_screen");
-    const bootStatus = document.getElementById("boot_status");
-
-    function showOnly(screen) {
-      authScreen.classList.add("hidden");
-      setupScreen.classList.add("hidden");
-      appScreen.classList.add("hidden");
-      screen.classList.remove("hidden");
-    }
-
-    function setBox(id, html) {
-      document.getElementById(id).innerHTML = html;
-    }
-
-    async function getSession() {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return data.session;
-    }
-
-    async function getUser() {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      return data.user;
-    }
-
-    async function getProfile(userId) {
-      const { data, error } = await supabase
-        .from("imobix_users")
-        .select("*, imobix_companies(name, phone, email)")
-        .eq("user_id", userId)
-        .eq("active", true)
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        return null;
-      }
-
-      return data || null;
-    }
-
-    function renderRoleSummary(profile) {
-      const role = profile.role;
-
-      if (role === "admin") {
-        setBox("role_summary", `
-          <b>Admin da imobiliária</b><br>
-          Pode gerenciar imóveis, captações, corretores, clientes, visitas e relatórios.<br>
-          <span class="badge">Acesso total</span>
-        `);
-        return;
-      }
-
-      if (role === "broker") {
-        setBox("role_summary", `
-          <b>Corretor</b><br>
-          Pode gerenciar seus imóveis, clientes, visitas e captações atribuídas.<br>
-          <span class="badge">Acesso comercial</span>
-        `);
-        return;
-      }
-
-      if (role === "client") {
-        setBox("role_summary", `
-          <b>Cliente</b><br>
-          Pode buscar imóveis, favoritar, solicitar visitas e acompanhar interesses.<br>
-          <span class="badge">Portal do cliente</span>
-        `);
-        return;
-      }
-
-      if (role === "owner") {
-        setBox("role_summary", `
-          <b>Proprietário</b><br>
-          Pode anunciar imóveis, acompanhar captações e falar com a imobiliária.<br>
-          <span class="badge">Captação de imóvel</span>
-        `);
-        return;
-      }
-
-      setBox("role_summary", `<b>Perfil não identificado</b>`);
-    }
-
-    function renderRoleActions(profile) {
-      const role = profile.role;
-
-      if (role === "admin") {
-        setBox("role_actions", `
-          <div class="row">
-            <a class="btn primary" href="./dashboard.html">Abrir dashboard</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <a class="btn ghost" href="./imoveis.html">Imóveis</a>
-            <a class="btn ghost" href="./corretores.html">Corretores</a>
-          </div>
-        `);
-        return;
-      }
-
-      if (role === "broker") {
-        setBox("role_actions", `
-          <div class="row">
-            <a class="btn primary" href="./dashboard.html">Abrir painel</a>
-            <a class="btn ghost" href="./visitas.html">Visitas</a>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <a class="btn ghost" href="./clientes.html">Clientes</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
-          </div>
-        `);
-        return;
-      }
-
-      if (role === "client") {
-        setBox("role_actions", `
-          <div class="row">
-            <a class="btn primary" href="./cliente-home.html">Minha área</a>
-            <a class="btn ghost" href="./index.html">Buscar imóveis</a>
-          </div>
-        `);
-        return;
-      }
-
-      if (role === "owner") {
-        setBox("role_actions", `
-          <div class="row">
-            <a class="btn primary" href="./anunciar.html">Anunciar meu imóvel</a>
-            <a class="btn ghost" href="./captacoes.html">Minhas captações</a>
-          </div>
-        `);
-        return;
-      }
-
-      setBox("role_actions", `<div class="item">Seu perfil ainda não tem uma área definida.</div>`);
-    }
-
-    function renderProfileInfo(profile, user) {
-      const companyName = profile.imobix_companies?.name || "-";
-      const companyPhone = profile.imobix_companies?.phone || "-";
-
-      setBox("profile_info", `
-        <b>${profile.full_name || user.email}</b><br>
-        Email: ${user.email}<br>
-        Perfil: ${profile.role}<br>
-        Imobiliária: ${companyName}<br>
-        Telefone da imobiliária: ${companyPhone}<br>
-        <span class="badge">${profile.active ? "Ativo" : "Inativo"}</span>
-      `);
-
-      document.getElementById("app_subtitle").textContent = `${companyName} • ${profile.role}`;
-    }
-
-    async function login() {
-      const email = document.getElementById("login_email").value.trim();
-      const password = document.getElementById("login_password").value.trim();
-
-      setBox("login_result", "");
-
-      if (!email || !password) {
-        setBox("login_result", `<div class="item">Preencha email e senha.</div>`);
-        return;
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        setBox("login_result", `<div class="item">${error.message}</div>`);
-        return;
-      }
-
-      await bootstrap();
-    }
-
-    async function signup() {
-      const email = document.getElementById("signup_email").value.trim();
-      const password = document.getElementById("signup_password").value.trim();
-
-      setBox("signup_result", "");
-
-      if (!email || !password) {
-        setBox("signup_result", `<div class="item">Preencha email e senha para criar a conta.</div>`);
-        return;
-      }
-
-      const { error } = await supabase.auth.signUp({ email, password });
-
-      if (error) {
-        setBox("signup_result", `<div class="item">${error.message}</div>`);
-        return;
-      }
-
-      setBox("signup_result", `<div class="item">Conta criada com sucesso. Agora entre com seu email e senha.</div>`);
-    }
-
-    async function logout() {
-      await supabase.auth.signOut();
-      window.location.href = "./app.html";
-    }
-
-    async function createCompany() {
-      const name = document.getElementById("company_name").value.trim();
-      const phone = document.getElementById("company_phone").value.trim();
-      const email = document.getElementById("company_email").value.trim();
-      const fullName = document.getElementById("admin_full_name").value.trim();
-
-      setBox("company_result", "");
-
-      if (!name) {
-        setBox("company_result", `<div class="item">Informe o nome da imobiliária.</div>`);
-        return;
-      }
-
-      const { error } = await supabase.rpc("imobix_create_company_with_admin", {
-        p_name: name,
-        p_phone: phone || null,
-        p_email: email || null,
-        p_full_name: fullName || null
-      });
-
-      if (error) {
-        setBox("company_result", `<div class="item">${error.message}</div>`);
-        return;
-      }
-
-      setBox("company_result", `<div class="item">Imobiliária criada com sucesso.</div>`);
-      await bootstrap();
-    }
-
-    async function bootstrap() {
-      try {
-        bootStatus.textContent = "Carregando...";
-
-        const session = await getSession();
-
-        if (!session) {
-          showOnly(authScreen);
-          bootStatus.textContent = "";
-          return;
-        }
-
-        const user = await getUser();
-
-        if (!user) {
-          showOnly(authScreen);
-          bootStatus.textContent = "";
-          return;
-        }
-
-        const profile = await getProfile(user.id);
-
-        if (!profile) {
-          showOnly(setupScreen);
-          return;
-        }
-
-        showOnly(appScreen);
-        renderProfileInfo(profile, user);
-        renderRoleSummary(profile);
-        renderRoleActions(profile);
-      } catch (error) {
-        showOnly(authScreen);
-        bootStatus.textContent = "";
-        setBox("login_result", `<div class="item">${error.message || "Erro ao carregar a página."}</div>`);
-      }
-    }
-
-    document.getElementById("login_btn").addEventListener("click", login);
-    document.getElementById("signup_btn").addEventListener("click", signup);
-    document.getElementById("create_company_btn").addEventListener("click", createCompany);
-    document.getElementById("refresh_btn").addEventListener("click", bootstrap);
-    document.getElementById("logout_btn_1").addEventListener("click", logout);
-    document.getElementById("logout_btn_2").addEventListener("click", logout);
-
-    bootstrap();
-  </script>
+
+<div class="wrap">
+
+<div class="center">
+<h1>Imobia</h1>
+<p>Plataforma imobiliária inteligente</p>
+</div>
+
+<div class="card">
+
+<h2>Entrar</h2>
+
+<input id="login_email" placeholder="Email">
+
+<input id="login_password" type="password" placeholder="Senha">
+
+<button class="primary" onclick="login()">
+Entrar
+</button>
+
+<div id="login_result"></div>
+
+<p class="center">
+Não tem conta?
+<a onclick="showSignup()">Criar conta</a>
+</p>
+
+</div>
+
+<div id="signup_block" class="card hidden">
+
+<h2>Criar conta</h2>
+
+<input id="signup_email" placeholder="Email">
+
+<input id="signup_password" type="password" placeholder="Senha">
+
+<button class="primary" onclick="signup()">
+Criar conta
+</button>
+
+<div id="signup_result"></div>
+
+<p class="center">
+Já tem conta?
+<a onclick="showLogin()">Entrar</a>
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+function showSignup(){
+document.querySelector(".card").classList.add("hidden");
+document.getElementById("signup_block").classList.remove("hidden");
+}
+
+function showLogin(){
+document.querySelector(".card").classList.remove("hidden");
+document.getElementById("signup_block").classList.add("hidden");
+}
+
+async function login(){
+
+const email=document.getElementById("login_email").value;
+const password=document.getElementById("login_password").value;
+
+const box=document.getElementById("login_result");
+box.innerHTML="";
+
+const {error}=await supabase.auth.signInWithPassword({
+email,
+password
+});
+
+if(error){
+box.innerHTML=`<div class="item">${error.message}</div>`;
+return;
+}
+
+location.href="./dashboard.html";
+
+}
+
+async function signup(){
+
+const email=document.getElementById("signup_email").value;
+const password=document.getElementById("signup_password").value;
+
+const box=document.getElementById("signup_result");
+box.innerHTML="";
+
+if(!email || !password){
+box.innerHTML=`<div class="item">Preencha email e senha.</div>`;
+return;
+}
+
+const {error}=await supabase.auth.signUp({
+email,
+password,
+options:{
+emailRedirectTo:"https://hibrity.github.io/imobia/app.html"
+}
+});
+
+if(error){
+box.innerHTML=`<div class="item">${error.message}</div>`;
+return;
+}
+
+box.innerHTML=`<div class="item">
+Conta criada. Verifique seu email para confirmar.
+</div>`;
+
+}
+
+</script>
+
 </body>
 </html>
