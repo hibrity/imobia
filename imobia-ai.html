@@ -5,17 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Imobia • Assistente IA</title>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    window.supabase = createClient(
-      "https://bcfjciljugeascgyokxa.supabase.co",
-      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-    );
-  </script>
-
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -27,7 +20,7 @@
     .wrap {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 18px;
     }
 
     .topbar {
@@ -50,16 +43,16 @@
       margin-top: 4px;
     }
 
-    .grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: 1.1fr .9fr;
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .card {
       background: #1e293b;
       padding: 18px;
-      border-radius: 14px;
+      border-radius: 16px;
       margin-bottom: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,.18);
     }
@@ -67,15 +60,27 @@
     .item {
       background: #0b1220;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid rgba(255,255,255,.06);
-      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     .chat-box {
-      height: 520px;
+      max-height: 340px;
       overflow: auto;
       padding-right: 4px;
+      margin-top: 14px;
     }
 
     .msg {
@@ -85,6 +90,7 @@
       max-width: 88%;
       white-space: pre-wrap;
       line-height: 1.45;
+      font-size: 14px;
     }
 
     .msg.user {
@@ -114,8 +120,8 @@
     input, select, textarea {
       width: 100%;
       border: none;
-      border-radius: 8px;
-      padding: 11px 12px;
+      border-radius: 10px;
+      padding: 12px 14px;
       margin-top: 8px;
       margin-bottom: 10px;
       font-size: 15px;
@@ -132,13 +138,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
+      min-height: 42px;
       padding: 10px 14px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 14px;
       text-decoration: none;
     }
 
@@ -162,6 +168,12 @@
       color: black;
     }
 
+    .outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.12);
+      color: white;
+    }
+
     .badge {
       display: inline-block;
       padding: 4px 8px;
@@ -176,6 +188,7 @@
     .muted {
       color: #cbd5e1;
       font-size: 14px;
+      line-height: 1.45;
     }
 
     .suggestion-chip {
@@ -187,12 +200,13 @@
       cursor: pointer;
       margin: 6px 6px 0 0;
       font-size: 13px;
+      border: none;
     }
 
     .property-card {
       background: #0b1220;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid rgba(255,255,255,.06);
       margin-top: 10px;
     }
@@ -201,8 +215,39 @@
       display: none;
     }
 
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+    }
+
+    .compact-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+
+    .ai-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 980px) {
       .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-grid {
         grid-template-columns: 1fr;
       }
 
@@ -211,7 +256,7 @@
       }
 
       .chat-box {
-        height: 420px;
+        max-height: 300px;
       }
     }
   </style>
@@ -224,7 +269,7 @@
         <div class="subtitle" id="page_subtitle">Assistente imobiliário inteligente</div>
       </div>
 
-      <div class="row" style="max-width:620px;width:100%;">
+      <div class="top-actions">
         <a class="btn ghost" href="./index.html">Portal</a>
         <a class="btn ghost" href="./dashboard.html">Dashboard</a>
         <a class="btn ghost" href="./cliente-home.html">Área do cliente</a>
@@ -236,68 +281,99 @@
     <div class="grid">
       <div>
         <div class="card">
-          <h3 style="margin-top:0;">Imobia AI</h3>
+          <div class="ai-header">
+            <div>
+              <h2 class="section-title">Imobia AI</h2>
+              <div class="muted">Converse com a IA para encontrar imóveis, terrenos, aluguel, compra e investimento.</div>
+            </div>
+
+            <div class="chat-controls">
+              <button class="primary" onclick="toggleChat()">
+                <span id="chat_toggle_label">Abrir chat</span>
+              </button>
+              <button class="ghost" onclick="clearChat()">Limpar conversa</button>
+            </div>
+          </div>
 
           <div id="quick_suggestions">
-            <span class="suggestion-chip" onclick="useSuggestion('Quero comprar um apartamento')">Quero comprar um apartamento</span>
-            <span class="suggestion-chip" onclick="useSuggestion('Procuro imóvel para aluguel')">Procuro imóvel para aluguel</span>
-            <span class="suggestion-chip" onclick="useSuggestion('Quero um terreno para investir')">Quero um terreno para investir</span>
-            <span class="suggestion-chip" onclick="useSuggestion('Busco imóvel comercial')">Busco imóvel comercial</span>
-            <span class="suggestion-chip" onclick="useSuggestion('Quero anunciar meu imóvel')">Quero anunciar meu imóvel</span>
+            <button class="suggestion-chip" onclick="useSuggestion('Quero comprar um apartamento')">Quero comprar um apartamento</button>
+            <button class="suggestion-chip" onclick="useSuggestion('Procuro imóvel para aluguel')">Procuro imóvel para aluguel</button>
+            <button class="suggestion-chip" onclick="useSuggestion('Quero um terreno para investir')">Quero um terreno para investir</button>
+            <button class="suggestion-chip" onclick="useSuggestion('Busco imóvel comercial')">Busco imóvel comercial</button>
+            <button class="suggestion-chip" onclick="useSuggestion('Quero anunciar meu imóvel')">Quero anunciar meu imóvel</button>
           </div>
 
-          <div id="chat_box" class="chat-box"></div>
-
-          <textarea id="user_message" placeholder="Digite sua mensagem para a Imobia AI"></textarea>
-
-          <div class="row">
-            <button class="primary" onclick="sendMessage()">Enviar</button>
-            <button class="ghost" onclick="clearChat()">Limpar conversa</button>
+          <div class="item" style="margin-top:14px;">
+            <b>Resumo rápido</b><br>
+            <div class="muted" style="margin-top:6px;">
+              A Imobia AI pode indicar imóveis, abrir caminho para visita, sugerir terrenos e registrar interesse automaticamente.
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div>
-        <div class="card">
-          <h3 style="margin-top:0;">Perfil detectado</h3>
-          <div id="profile_box" class="item">Carregando...</div>
-        </div>
+          <div id="chat_panel" class="hidden">
+            <div id="chat_box" class="chat-box"></div>
 
-        <div class="card">
-          <h3 style="margin-top:0;">Imóveis sugeridos</h3>
-          <div id="suggested_properties">Nenhuma sugestão ainda.</div>
+            <textarea id="user_message" placeholder="Digite sua mensagem para a Imobia AI"></textarea>
+
+            <div class="row">
+              <button class="primary" onclick="sendMessage()">Enviar</button>
+              <button class="outline" onclick="toggleChat()">Fechar chat</button>
+            </div>
+          </div>
         </div>
 
         <div class="card">
-          <h3 style="margin-top:0;">Ações da IA</h3>
-          <div class="row">
-            <button class="ghost" onclick="useSuggestion('Quero agendar visita')">Agendar visita</button>
-            <button class="ghost" onclick="useSuggestion('Quero falar com corretor')">Falar com corretor</button>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <button class="warning" onclick="useSuggestion('Quero estimar custo de construção')">Estimar custo</button>
-            <button class="warning" onclick="useSuggestion('Quero visualizar construção em terreno')">Visualizar construção</button>
-          </div>
-          <div id="lead_result"></div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0;">Leitura da conversa</h3>
+          <h3 class="compact-title">Leitura da conversa</h3>
           <div id="conversation_summary" class="item">
             Ainda sem contexto suficiente.
           </div>
         </div>
       </div>
+
+      <div>
+        <div class="mini-grid">
+          <div class="card">
+            <h3 class="compact-title">Perfil detectado</h3>
+            <div id="profile_box" class="item">Carregando...</div>
+          </div>
+
+          <div class="card">
+            <h3 class="compact-title">Ações rápidas</h3>
+            <div class="row">
+              <button class="ghost" onclick="useSuggestion('Quero agendar visita')">Agendar visita</button>
+              <button class="ghost" onclick="useSuggestion('Quero falar com corretor')">Falar com corretor</button>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <button class="warning" onclick="useSuggestion('Quero estimar custo de construção')">Estimar custo</button>
+              <button class="warning" onclick="useSuggestion('Quero visualizar construção em terreno')">Visualizar construção</button>
+            </div>
+            <div id="lead_result" style="margin-top:10px;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="compact-title">Imóveis sugeridos</h3>
+          <div id="suggested_properties">Nenhuma sugestão ainda.</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+
     let currentUser = null;
     let currentProfile = null;
     let currentClientRecord = null;
     let currentCompanyId = null;
     let publicProperties = [];
     let currentSuggestions = [];
+    let chatOpen = false;
 
     function getChatKey() {
       return `imobia_ai_chat_${currentUser?.id || "guest"}`;
@@ -447,8 +523,9 @@
       if (!history.length) {
         box.innerHTML = `
           <div class="msg ai">
-            Olá! Eu sou a Imobia AI.<br>
-            Posso te ajudar a encontrar imóveis, terrenos, oportunidades de investimento, aluguel, compra ou anunciar seu imóvel.
+            Olá! Eu sou a Imobia AI.
+
+Posso te ajudar a encontrar imóveis, terrenos, oportunidades de investimento, aluguel, compra ou anunciar seu imóvel.
           </div>
         `;
         return;
@@ -481,6 +558,7 @@
     }
 
     function useSuggestion(text) {
+      if (!chatOpen) toggleChat(true);
       document.getElementById("user_message").value = text;
       sendMessage();
     }
@@ -700,21 +778,10 @@
       if (matches.length) {
         let response = `Encontrei ${matches.length} imóvel(is) que combinam com o que você descreveu.`;
 
-        if (criteria.type) {
-          response += `\nTipo priorizado: ${propertyTypeLabel(criteria.type)}.`;
-        }
-
-        if (criteria.purpose) {
-          response += `\nFinalidade: ${purposeLabel(criteria.purpose)}.`;
-        }
-
-        if (criteria.city) {
-          response += `\nCidade: ${criteria.city}.`;
-        }
-
-        if (criteria.maxPrice) {
-          response += `\nFaixa máxima: ${formatMoney(criteria.maxPrice)}.`;
-        }
+        if (criteria.type) response += `\nTipo priorizado: ${propertyTypeLabel(criteria.type)}.`;
+        if (criteria.purpose) response += `\nFinalidade: ${purposeLabel(criteria.purpose)}.`;
+        if (criteria.city) response += `\nCidade: ${criteria.city}.`;
+        if (criteria.maxPrice) response += `\nFaixa máxima: ${formatMoney(criteria.maxPrice)}.`;
 
         response += `\n\nVeja as sugestões ao lado. Se quiser, também posso refinar por bairro, número de quartos ou investimento.`;
 
@@ -751,6 +818,26 @@
       await processAI(text);
     }
 
+    function toggleChat(forceOpen = null) {
+      const panel = document.getElementById("chat_panel");
+      const label = document.getElementById("chat_toggle_label");
+
+      if (forceOpen === true) {
+        chatOpen = true;
+      } else if (forceOpen === false) {
+        chatOpen = false;
+      } else {
+        chatOpen = !chatOpen;
+      }
+
+      panel.classList.toggle("hidden", !chatOpen);
+      label.textContent = chatOpen ? "Fechar chat" : "Abrir chat";
+
+      if (chatOpen) {
+        renderChat();
+      }
+    }
+
     async function reloadAssistant() {
       await loadPage();
     }
@@ -783,17 +870,18 @@
       renderChat();
       renderSuggestedProperties();
       renderConversationSummary();
+      toggleChat(false);
     }
 
     loadPage();
 
     window.logout = logout;
-    window.loadPage = loadPage;
     window.reloadAssistant = reloadAssistant;
     window.sendMessage = sendMessage;
     window.clearChat = clearChat;
     window.useSuggestion = useSuggestion;
     window.registerInterest = registerInterest;
+    window.toggleChat = toggleChat;
   </script>
 </body>
 </html>
