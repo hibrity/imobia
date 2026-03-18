@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Painel do Corretor</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mini-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stat {
+      background: #0b1220;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat-label {
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .stat-sub {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .section-title {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .outline {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .badge.pending {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge.confirmed {
+      background: #38bdf8;
+      color: black;
+    }
+
+    .badge.completed {
+      background: #22c55e;
+      color: black;
+    }
+
+    .badge.cancelled {
+      background: #ef4444;
+      color: white;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .stats-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando painel do corretor...</div>
+      </div>
+
+      <div class="top-actions">
+        <a class="btn ghost" href="./index.html">Portal</a>
+        <a class="btn ghost" href="./imoveis.html">Imóveis</a>
+        <a class="btn ghost" href="./clientes.html">Clientes</a>
+        <a class="btn ghost" href="./visitas.html">Visitas</a>
+        <a class="btn ghost" href="./contratos.html">Contratos</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="access_warning" class="card hidden">
+      <h2 class="section-title">Acesso restrito</h2>
+      <div class="item">
+        Esta área é exclusiva do corretor. Para gestão completa da imobiliária, use a dashboard administrativa.
+      </div>
+    </div>
+
+    <div id="broker_content" class="hidden">
+      <div class="card">
+        <h2 class="section-title">Visão geral do corretor</h2>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Imóveis atribuídos</div>
+            <div class="stat-value" id="stat_properties">0</div>
+            <div class="stat-sub">Carteira do corretor</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Clientes ativos</div>
+            <div class="stat-value" id="stat_clients">0</div>
+            <div class="stat-sub">Base em acompanhamento</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Visitas futuras</div>
+            <div class="stat-value" id="stat_visits">0</div>
+            <div class="stat-sub">Agenda do corretor</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Contratos pendentes</div>
+            <div class="stat-value" id="stat_contracts_pending">0</div>
+            <div class="stat-sub">Aguardando fechamento</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <a class="btn primary" href="./imoveis.html">Meus imóveis</a>
+          <a class="btn ghost" href="./clientes.html">Meus clientes</a>
+          <a class="btn ghost" href="./visitas.html">Minha agenda</a>
+          <a class="btn warning" href="./imobia-ai.html">Usar IA</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h2 class="section-title">Meus imóveis</h2>
+            <div id="properties_list">Carregando...</div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Meus contratos</h2>
+            <div id="contracts_list">Carregando...</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 class="section-title">Meus clientes</h2>
+            <div id="clients_list">Carregando...</div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Próximas visitas</h2>
+            <div id="visits_list">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Dados técnicos</h2>
+
+        <div class="mini-grid">
+          <div class="item">
+            <b>Imóveis disponíveis</b><br>
+            <span id="tech_available">0</span>
+          </div>
+
+          <div class="item">
+            <b>Imóveis vendidos</b><br>
+            <span id="tech_sold">0</span>
+          </div>
+
+          <div class="item">
+            <b>Imóveis alugados</b><br>
+            <span id="tech_rented">0</span>
+          </div>
+
+          <div class="item">
+            <b>Contratos assinados</b><br>
+            <span id="tech_signed_contracts">0</span>
+          </div>
+
+          <div class="item">
+            <b>Visitas confirmadas</b><br>
+            <span id="tech_confirmed_visits">0</span>
+          </div>
+
+          <div class="item">
+            <b>Leads/Interesses</b><br>
+            <span id="tech_leads">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+
+    let currentUser = null;
+    let currentProfile = null;
+    let brokerInternalId = null;
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function propertyTypeLabel(v) {
+      if (v === "house") return "Casa";
+      if (v === "apartment") return "Apartamento";
+      if (v === "land") return "Terreno";
+      if (v === "commercial") return "Comercial";
+      return v || "-";
+    }
+
+    function statusLabel(v) {
+      if (v === "available") return "Disponível";
+      if (v === "reserved") return "Reservado";
+      if (v === "sold") return "Vendido";
+      if (v === "rented") return "Alugado";
+      return v || "-";
+    }
+
+    function visitStatusLabel(v) {
+      if (v === "scheduled") return "Agendada";
+      if (v === "confirmed") return "Confirmada";
+      if (v === "completed") return "Realizada";
+      if (v === "cancelled") return "Cancelada";
+      return v || "-";
+    }
+
+    function contractStatusLabel(v) {
+      if (v === "pending") return "Pendente";
+      if (v === "in_progress") return "Em andamento";
+      if (v === "signed") return "Assinado";
+      if (v === "cancelled") return "Cancelado";
+      return v || "-";
+    }
+
+    function contractTypeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function renderSimpleList(id, items, mapper) {
+      const box = document.getElementById(id);
+
+      if (!items || !items.length) {
+        box.innerHTML = `<div class="item">Nenhum registro encontrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = items.map(mapper).join("");
+    }
+
+    async function loadBrokerData() {
+      const companyId = currentProfile.company_id;
+
+      const [
+        propertiesRes,
+        clientsRes,
+        visitsRes,
+        contractsRes,
+        interestsRes
+      ] = await Promise.all([
+        supabase.from("properties").select("*").eq("company_id", companyId).eq("broker_user_id", currentUser.id).order("created_at", { ascending: false }),
+        supabase.from("property_clients").select("*").eq("company_id", companyId).order("created_at", { ascending: false }),
+        supabase.from("property_visits").select("*").eq("company_id", companyId).order("visit_date", { ascending: true }),
+        supabase.from("property_contracts").select("*").eq("company_id", companyId).eq("broker_id", brokerInternalId).order("created_at", { ascending: false }),
+        supabase.from("property_interest").select("*").eq("company_id", companyId).order("created_at", { ascending: false })
+      ]);
+
+      const properties = propertiesRes.data || [];
+      const allClients = clientsRes.data || [];
+      const allVisits = visitsRes.data || [];
+      const contracts = contractsRes.data || [];
+      const interests = interestsRes.data || [];
+
+      const propertyIds = new Set(properties.map(p => p.id));
+
+      const relatedVisits = allVisits.filter(v => {
+        if (!v.property_id) return false;
+        return propertyIds.has(v.property_id);
+      });
+
+      const relatedClientIds = new Set([
+        ...relatedVisits.map(v => v.client_id).filter(Boolean),
+        ...contracts.map(c => c.client_id).filter(Boolean)
+      ]);
+
+      const clients = allClients.filter(c => relatedClientIds.has(c.id));
+
+      const futureVisits = relatedVisits.filter(v => v.visit_date && new Date(v.visit_date) > new Date());
+      const confirmedVisits = relatedVisits.filter(v => v.status === "confirmed");
+      const availableProperties = properties.filter(p => p.status === "available");
+      const soldProperties = properties.filter(p => p.status === "sold");
+      const rentedProperties = properties.filter(p => p.status === "rented");
+      const pendingContracts = contracts.filter(c => c.status === "pending");
+      const signedContracts = contracts.filter(c => c.status === "signed");
+
+      const relatedLeads = interests.filter(i => {
+        if (!i.property_id) return false;
+        return propertyIds.has(i.property_id);
+      });
+
+      setText("stat_properties", properties.length);
+      setText("stat_clients", clients.length);
+      setText("stat_visits", futureVisits.length);
+      setText("stat_contracts_pending", pendingContracts.length);
+
+      setText("tech_available", availableProperties.length);
+      setText("tech_sold", soldProperties.length);
+      setText("tech_rented", rentedProperties.length);
+      setText("tech_signed_contracts", signedContracts.length);
+      setText("tech_confirmed_visits", confirmedVisits.length);
+      setText("tech_leads", relatedLeads.length);
+
+      renderSimpleList("properties_list", properties.slice(0, 8), item => `
+        <div class="item">
+          <b>${item.title || "Imóvel"}</b><br>
+          ${propertyTypeLabel(item.property_type)} • ${statusLabel(item.status)}<br>
+          ${item.city || "-"}${item.neighborhood ? " • " + item.neighborhood : ""}<br>
+          Valor: ${formatMoney(item.price)}
+        </div>
+      `);
+
+      renderSimpleList("clients_list", clients.slice(0, 8), item => `
+        <div class="item">
+          <b>${item.full_name || "Cliente"}</b><br>
+          Email: ${item.email || "-"}<br>
+          Telefone: ${item.phone || "-"}<br>
+          Interesse: ${item.interest_type || "-"}
+        </div>
+      `);
+
+      renderSimpleList("visits_list", futureVisits.slice(0, 8), item => `
+        <div class="item">
+          <b>Visita</b><br>
+          Data: ${item.visit_date ? new Date(item.visit_date).toLocaleString("pt-BR") : "-"}<br>
+          Status: <span class="badge ${item.status || "scheduled"}">${visitStatusLabel(item.status)}</span><br>
+          ${item.notes || ""}
+        </div>
+      `);
+
+      renderSimpleList("contracts_list", contracts.slice(0, 8), item => `
+        <div class="item">
+          <b>${contractTypeLabel(item.contract_type)}</b><br>
+          Status: <span class="badge ${item.status || "pending"}">${contractStatusLabel(item.status)}</span><br>
+          Valor: ${formatMoney(item.price)}<br>
+          ${item.start_date ? `Início: ${new Date(item.start_date).toLocaleDateString("pt-BR")}<br>` : ""}
+          ${item.end_date ? `Fim: ${new Date(item.end_date).toLocaleDateString("pt-BR")}<br>` : ""}
+        </div>
+      `);
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Painel do corretor`;
+
+      if (currentProfile.role !== "broker") {
+        document.getElementById("access_warning").classList.remove("hidden");
+        document.getElementById("broker_content").classList.add("hidden");
+        return;
+      }
+
+      brokerInternalId = currentProfile.id;
+
+      document.getElementById("access_warning").classList.add("hidden");
+      document.getElementById("broker_content").classList.remove("hidden");
+
+      await loadBrokerData();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+  </script>
+</body>
+</html>
