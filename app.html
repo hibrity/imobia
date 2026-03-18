@@ -367,7 +367,7 @@
           </div>
 
           <div class="card">
-            <h3 style="margin-top:0;">Entrar no sistema</h3>
+            <h3 style="margin-top:0;">Acessar minha área</h3>
             <div id="role_actions"></div>
           </div>
         </div>
@@ -451,6 +451,14 @@
       document.getElementById("signup_client_fields").classList.toggle("hidden", role !== "client");
     }
 
+    function getRedirectByRole(role) {
+      if (role === "admin") return "./dashboard.html";
+      if (role === "broker") return "./corretor-home.html";
+      if (role === "client") return "./cliente-home.html";
+      if (role === "owner") return "./anunciar.html";
+      return "./index.html";
+    }
+
     async function getSession() {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
@@ -482,7 +490,7 @@
       if (role === "admin") {
         setBox("role_summary", `
           <b>Admin da imobiliária</b><br>
-          Pode gerenciar imóveis, captações, corretores, clientes, visitas e relatórios.<br>
+          Pode gerenciar imóveis, captações, corretores, clientes, visitas, contratos e relatórios.<br>
           <span class="badge">Acesso total</span>
         `);
         return;
@@ -491,7 +499,7 @@
       if (role === "broker") {
         setBox("role_summary", `
           <b>Corretor</b><br>
-          Pode gerenciar seus imóveis, clientes, visitas e captações atribuídas.<br>
+          Pode gerenciar seus imóveis, clientes, visitas, contratos e captações atribuídas.<br>
           <span class="badge">Acesso comercial</span>
         `);
         return;
@@ -500,7 +508,7 @@
       if (role === "client") {
         setBox("role_summary", `
           <b>Cliente</b><br>
-          Pode buscar imóveis, favoritar, solicitar visitas e acompanhar interesses.<br>
+          Pode buscar imóveis, solicitar visitas e acompanhar interesses.<br>
           <span class="badge">Portal do cliente</span>
         `);
         return;
@@ -519,13 +527,13 @@
     }
 
     function renderRoleActions(profile) {
-      const role = profile.role;
+      const redirect = getRedirectByRole(profile.role);
 
-      if (role === "admin") {
+      if (profile.role === "admin") {
         setBox("role_actions", `
           <div class="row">
-            <a class="btn primary" href="./dashboard.html">Abrir dashboard</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
+            <a class="btn primary" href="${redirect}">Abrir dashboard</a>
+            <a class="btn ghost" href="./contratos.html">Contratos</a>
           </div>
           <div class="row" style="margin-top:10px;">
             <a class="btn ghost" href="./imoveis.html">Imóveis</a>
@@ -535,34 +543,34 @@
         return;
       }
 
-      if (role === "broker") {
+      if (profile.role === "broker") {
         setBox("role_actions", `
           <div class="row">
-            <a class="btn primary" href="./dashboard.html">Abrir painel</a>
+            <a class="btn primary" href="${redirect}">Abrir painel do corretor</a>
             <a class="btn ghost" href="./visitas.html">Visitas</a>
           </div>
           <div class="row" style="margin-top:10px;">
             <a class="btn ghost" href="./clientes.html">Clientes</a>
-            <a class="btn ghost" href="./captacoes.html">Captações</a>
+            <a class="btn ghost" href="./contratos.html">Contratos</a>
           </div>
         `);
         return;
       }
 
-      if (role === "client") {
+      if (profile.role === "client") {
         setBox("role_actions", `
           <div class="row">
-            <a class="btn primary" href="./cliente-home.html">Minha área</a>
+            <a class="btn primary" href="${redirect}">Abrir área do cliente</a>
             <a class="btn ghost" href="./index.html">Buscar imóveis</a>
           </div>
         `);
         return;
       }
 
-      if (role === "owner") {
+      if (profile.role === "owner") {
         setBox("role_actions", `
           <div class="row">
-            <a class="btn primary" href="./anunciar.html">Anunciar meu imóvel</a>
+            <a class="btn primary" href="${redirect}">Abrir área do proprietário</a>
             <a class="btn ghost" href="./captacoes.html">Minhas captações</a>
           </div>
         `);
@@ -610,7 +618,7 @@
         return;
       }
 
-      await bootstrap();
+      await bootstrap(true);
     }
 
     async function signup() {
@@ -816,10 +824,10 @@
       }
 
       setBox("company_result", `<div class="item">Imobiliária criada com sucesso.</div>`);
-      await bootstrap();
+      await bootstrap(true);
     }
 
-    async function bootstrap() {
+    async function bootstrap(autoRedirect = false) {
       try {
         const session = await getSession();
 
@@ -839,6 +847,11 @@
 
         if (!profile) {
           showOnly(setupScreen);
+          return;
+        }
+
+        if (autoRedirect) {
+          window.location.href = getRedirectByRole(profile.role);
           return;
         }
 
@@ -862,13 +875,13 @@
     document.getElementById("login_btn").addEventListener("click", login);
     document.getElementById("signup_btn").addEventListener("click", signup);
     document.getElementById("create_company_btn").addEventListener("click", createCompany);
-    document.getElementById("refresh_btn").addEventListener("click", bootstrap);
+    document.getElementById("refresh_btn").addEventListener("click", () => bootstrap(false));
     document.getElementById("logout_btn_1").addEventListener("click", logout);
     document.getElementById("logout_btn_2").addEventListener("click", logout);
 
     setSignupRole("company");
     showTab("login");
-    bootstrap();
+    bootstrap(false);
   </script>
 </body>
 </html>
