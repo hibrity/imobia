@@ -117,7 +117,9 @@
       border-color: #22c55e;
     }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
 
     .row {
       display: flex;
@@ -130,7 +132,8 @@
       min-width: 140px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       border: none;
       border-radius: 10px;
@@ -142,7 +145,8 @@
       color: black;
     }
 
-    button, a.btn {
+    button,
+    a.btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -166,7 +170,9 @@
       color: white;
     }
 
-    .full { width: 100%; }
+    .full {
+      width: 100%;
+    }
 
     .item {
       background: #0b1220;
@@ -187,6 +193,16 @@
       font-size: 13px;
       margin-top: 10px;
       line-height: 1.4;
+    }
+
+    .chooser-note {
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,.06);
+      color: #cbd5e1;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
     }
 
     @media (max-width: 700px) {
@@ -241,12 +257,16 @@
           <p class="section-text">Escolha o perfil e preencha apenas os campos necessários.</p>
 
           <div class="profile-grid">
-            <div class="profile-option active" data-role="company">Imobiliária</div>
+            <div class="profile-option" data-role="company">Imobiliária</div>
             <div class="profile-option" data-role="broker">Corretor</div>
             <div class="profile-option" data-role="client">Cliente</div>
           </div>
 
-          <div id="signup_company_fields">
+          <div id="signup_chooser_note" class="chooser-note">
+            Escolha um perfil para continuar.
+          </div>
+
+          <div id="signup_company_fields" class="hidden">
             <input id="signup_company_name" placeholder="Nome da imobiliária" />
             <input id="signup_company_cnpj" placeholder="CNPJ" />
             <input id="signup_company_phone" placeholder="Telefone" />
@@ -257,10 +277,12 @@
           <div id="signup_broker_fields" class="hidden">
             <input id="signup_broker_full_name" placeholder="Nome completo" />
             <input id="signup_broker_phone" placeholder="Telefone" />
+
             <div class="row">
               <input id="signup_broker_creci" placeholder="CRECI" />
               <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
             </div>
+
             <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
           </div>
 
@@ -304,7 +326,7 @@
     const requestedRole = params.get("role");
     const requestedNext = params.get("next");
 
-    let selectedSignupRole = "company";
+    let selectedSignupRole = null;
     let loginBusy = false;
     let signupBusy = false;
 
@@ -346,6 +368,24 @@
       tabSignup.classList.add("active");
     }
 
+    function resetSignupFields() {
+      document.getElementById("signup_company_fields").classList.add("hidden");
+      document.getElementById("signup_broker_fields").classList.add("hidden");
+      document.getElementById("signup_client_fields").classList.add("hidden");
+    }
+
+    function updateChooserNote() {
+      const note = document.getElementById("signup_chooser_note");
+
+      if (!selectedSignupRole) {
+        note.classList.remove("hidden");
+        note.textContent = "Escolha um perfil para continuar.";
+        return;
+      }
+
+      note.classList.add("hidden");
+    }
+
     function setSignupRole(role) {
       selectedSignupRole = role;
 
@@ -353,9 +393,32 @@
         el.classList.toggle("active", el.dataset.role === role);
       });
 
-      document.getElementById("signup_company_fields").classList.toggle("hidden", role !== "company");
-      document.getElementById("signup_broker_fields").classList.toggle("hidden", role !== "broker");
-      document.getElementById("signup_client_fields").classList.toggle("hidden", role !== "client");
+      resetSignupFields();
+
+      if (role === "company") {
+        document.getElementById("signup_company_fields").classList.remove("hidden");
+      }
+
+      if (role === "broker") {
+        document.getElementById("signup_broker_fields").classList.remove("hidden");
+      }
+
+      if (role === "client") {
+        document.getElementById("signup_client_fields").classList.remove("hidden");
+      }
+
+      updateChooserNote();
+    }
+
+    function clearSignupRoleSelection() {
+      selectedSignupRole = null;
+
+      document.querySelectorAll(".profile-option").forEach(el => {
+        el.classList.remove("active");
+      });
+
+      resetSignupFields();
+      updateChooserNote();
     }
 
     function getDefaultRedirectByRole(role) {
@@ -551,6 +614,11 @@
 
       setBox("signup_result", "");
 
+      if (!selectedSignupRole) {
+        setBox("signup_result", `<div class="item">Escolha primeiro um perfil para criar a conta.</div>`);
+        return;
+      }
+
       if (!email || !password) {
         setBox("signup_result", `<div class="item">Preencha email e senha para criar a conta.</div>`);
         return;
@@ -631,7 +699,7 @@
     if (requestedRole === "client" || requestedRole === "broker" || requestedRole === "company") {
       setSignupRole(requestedRole);
     } else {
-      setSignupRole("company");
+      clearSignupRoleSelection();
     }
 
     bootIfAlreadyLogged();
