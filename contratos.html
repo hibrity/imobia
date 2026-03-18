@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imobia • Contratos</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .item {
+      background: #0b1220;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+
+    .section-title {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      background: white;
+      color: black;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button, a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: black;
+    }
+
+    .ghost {
+      background: #334155;
+      color: white;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .warning {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .outline {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+      background: #22c55e;
+      color: black;
+    }
+
+    .badge.pending {
+      background: #f59e0b;
+      color: black;
+    }
+
+    .badge.in_progress {
+      background: #38bdf8;
+      color: black;
+    }
+
+    .badge.signed {
+      background: #22c55e;
+      color: black;
+    }
+
+    .badge.cancelled {
+      background: #ef4444;
+      color: white;
+    }
+
+    .list-empty {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .doc-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">Imobia</div>
+        <div class="subtitle" id="page_subtitle">Carregando contratos...</div>
+      </div>
+
+      <div class="top-actions">
+        <a class="btn ghost" href="./dashboard.html">Dashboard</a>
+        <a class="btn ghost" href="./imoveis.html">Imóveis</a>
+        <a class="btn ghost" href="./clientes.html">Clientes</a>
+        <button class="ghost" onclick="loadPage()">Atualizar</button>
+        <button class="danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="access_warning" class="card hidden">
+      <h2 class="section-title">Acesso restrito</h2>
+      <div class="item">
+        Esta área é destinada à imobiliária e aos corretores.
+      </div>
+    </div>
+
+    <div id="contracts_content" class="hidden">
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h2 class="section-title">Novo contrato</h2>
+
+            <select id="contract_property_id">
+              <option value="">Selecione o imóvel</option>
+            </select>
+
+            <select id="contract_client_id">
+              <option value="">Selecione o cliente</option>
+            </select>
+
+            <div class="row">
+              <select id="contract_type">
+                <option value="sale">Venda</option>
+                <option value="rent">Aluguel</option>
+              </select>
+
+              <select id="contract_broker_id">
+                <option value="">Selecione o corretor</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <input id="contract_price" type="number" step="0.01" placeholder="Valor do contrato" />
+              <select id="contract_status">
+                <option value="pending">Pendente</option>
+                <option value="in_progress">Em andamento</option>
+                <option value="signed">Assinado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <input id="contract_start_date" type="datetime-local" />
+              <input id="contract_end_date" type="datetime-local" />
+            </div>
+
+            <textarea id="contract_notes" placeholder="Observações do contrato"></textarea>
+
+            <div class="toolbar">
+              <button class="primary" onclick="createContract()">Salvar contrato</button>
+              <button class="outline" onclick="clearContractForm()">Limpar formulário</button>
+            </div>
+
+            <div id="contract_result"></div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Upload de documento</h2>
+
+            <select id="doc_contract_id">
+              <option value="">Selecione o contrato</option>
+            </select>
+
+            <input id="doc_file" type="file" />
+
+            <button class="primary" onclick="uploadDocument()">Enviar documento</button>
+
+            <div id="doc_result"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 class="section-title">Resumo</h2>
+
+            <div class="row">
+              <div class="item">
+                <b>Contratos pendentes</b><br>
+                <span id="summary_pending">0</span>
+              </div>
+
+              <div class="item">
+                <b>Em andamento</b><br>
+                <span id="summary_in_progress">0</span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="item">
+                <b>Assinados</b><br>
+                <span id="summary_signed">0</span>
+              </div>
+
+              <div class="item">
+                <b>Cancelados</b><br>
+                <span id="summary_cancelled">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Filtros</h2>
+
+            <div class="row">
+              <select id="filter_status">
+                <option value="">Todos os status</option>
+                <option value="pending">Pendente</option>
+                <option value="in_progress">Em andamento</option>
+                <option value="signed">Assinado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+
+              <select id="filter_type">
+                <option value="">Venda ou aluguel</option>
+                <option value="sale">Venda</option>
+                <option value="rent">Aluguel</option>
+              </select>
+            </div>
+
+            <button class="ghost" onclick="renderContracts()">Aplicar filtros</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Contratos cadastrados</h2>
+        <div id="contracts_list" class="list-empty">Carregando...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+
+    let currentUser = null;
+    let currentProfile = null;
+    let currentProperties = [];
+    let currentClients = [];
+    let currentBrokers = [];
+    let currentContracts = [];
+    let currentDocuments = [];
+
+    async function logout() {
+      await supabase.auth.signOut();
+      location.href = "./app.html";
+    }
+
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    async function getUser() {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
+
+    async function getProfile() {
+      const { data } = await supabase
+        .from("imobix_users")
+        .select("*, imobix_companies(name)")
+        .eq("user_id", currentUser.id)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+
+      return data || null;
+    }
+
+    function roleLabel(role) {
+      if (role === "admin") return "Admin";
+      if (role === "broker") return "Corretor";
+      if (role === "client") return "Cliente";
+      if (role === "owner") return "Proprietário";
+      return role || "-";
+    }
+
+    function formatMoney(v) {
+      if (v === null || v === undefined || v === "") return "-";
+      return Number(v).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function contractTypeLabel(v) {
+      if (v === "sale") return "Venda";
+      if (v === "rent") return "Aluguel";
+      return v || "-";
+    }
+
+    function contractStatusLabel(v) {
+      if (v === "pending") return "Pendente";
+      if (v === "in_progress") return "Em andamento";
+      if (v === "signed") return "Assinado";
+      if (v === "cancelled") return "Cancelado";
+      return v || "-";
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function findProperty(id) {
+      return currentProperties.find(item => item.id === id);
+    }
+
+    function findClient(id) {
+      return currentClients.find(item => item.id === id);
+    }
+
+    function findBroker(id) {
+      return currentBrokers.find(item => item.id === id);
+    }
+
+    function getDocumentsByContract(contractId) {
+      return currentDocuments.filter(doc => doc.contract_id === contractId);
+    }
+
+    function clearContractForm() {
+      document.getElementById("contract_property_id").value = "";
+      document.getElementById("contract_client_id").value = "";
+      document.getElementById("contract_type").value = "sale";
+      document.getElementById("contract_broker_id").value = "";
+      document.getElementById("contract_price").value = "";
+      document.getElementById("contract_status").value = "pending";
+      document.getElementById("contract_start_date").value = "";
+      document.getElementById("contract_end_date").value = "";
+      document.getElementById("contract_notes").value = "";
+    }
+
+    function populateSelect(selectId, items, getLabel) {
+      const select = document.getElementById(selectId);
+      const currentFirst = select.options[0]?.outerHTML || `<option value="">Selecione</option>`;
+      select.innerHTML = currentFirst;
+
+      items.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.id;
+        option.textContent = getLabel(item);
+        select.appendChild(option);
+      });
+    }
+
+    async function loadDependencies() {
+      const companyId = currentProfile.company_id;
+
+      const [
+        propertiesRes,
+        clientsRes,
+        brokersRes,
+        contractsRes,
+        docsRes
+      ] = await Promise.all([
+        supabase.from("properties").select("*").eq("company_id", companyId).order("created_at", { ascending: false }),
+        supabase.from("property_clients").select("*").eq("company_id", companyId).order("created_at", { ascending: false }),
+        supabase.from("imobix_users").select("*").eq("company_id", companyId).eq("role", "broker").eq("active", true).order("created_at", { ascending: false }),
+        supabase.from("property_contracts").select("*").eq("company_id", companyId).order("created_at", { ascending: false }),
+        supabase.from("property_contract_documents").select("*").eq("company_id", companyId).order("created_at", { ascending: false })
+      ]);
+
+      currentProperties = propertiesRes.data || [];
+      currentClients = clientsRes.data || [];
+      currentBrokers = brokersRes.data || [];
+      currentContracts = contractsRes.data || [];
+      currentDocuments = docsRes.data || [];
+
+      populateSelect("contract_property_id", currentProperties, item => `${item.title || "Imóvel"} • ${formatMoney(item.price)}`);
+      populateSelect("contract_client_id", currentClients, item => `${item.full_name || "Cliente"}${item.email ? " • " + item.email : ""}`);
+      populateSelect("contract_broker_id", currentBrokers, item => `${item.full_name || "Corretor"}${item.creci ? " • CRECI " + item.creci : ""}`);
+
+      const contractLabel = item => `${contractTypeLabel(item.contract_type)} • ${contractStatusLabel(item.status)} • ${formatMoney(item.price)}`;
+      populateSelect("doc_contract_id", currentContracts, contractLabel);
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      setText("summary_pending", currentContracts.filter(c => c.status === "pending").length);
+      setText("summary_in_progress", currentContracts.filter(c => c.status === "in_progress").length);
+      setText("summary_signed", currentContracts.filter(c => c.status === "signed").length);
+      setText("summary_cancelled", currentContracts.filter(c => c.status === "cancelled").length);
+    }
+
+    async function createContract() {
+      const box = document.getElementById("contract_result");
+
+      const payload = {
+        company_id: currentProfile.company_id,
+        property_id: document.getElementById("contract_property_id").value || null,
+        client_id: document.getElementById("contract_client_id").value || null,
+        broker_id: document.getElementById("contract_broker_id").value || null,
+        contract_type: document.getElementById("contract_type").value,
+        status: document.getElementById("contract_status").value,
+        price: document.getElementById("contract_price").value ? Number(document.getElementById("contract_price").value) : null,
+        start_date: document.getElementById("contract_start_date").value || null,
+        end_date: document.getElementById("contract_end_date").value || null,
+        notes: document.getElementById("contract_notes").value.trim() || null,
+        created_by: currentUser.id
+      };
+
+      box.innerHTML = "";
+
+      if (!payload.property_id) {
+        box.innerHTML = `<div class="item">Selecione o imóvel.</div>`;
+        return;
+      }
+
+      if (!payload.contract_type) {
+        box.innerHTML = `<div class="item">Selecione o tipo do contrato.</div>`;
+        return;
+      }
+
+      const { error } = await supabase
+        .from("property_contracts")
+        .insert(payload);
+
+      if (error) {
+        box.innerHTML = `<div class="item">${error.message}</div>`;
+        return;
+      }
+
+      box.innerHTML = `<div class="item">Contrato criado com sucesso.</div>`;
+      clearContractForm();
+      await loadDependencies();
+      renderContracts();
+    }
+
+    async function updateContractStatus(contractId, status) {
+      const { error } = await supabase
+        .from("property_contracts")
+        .update({ status })
+        .eq("id", contractId);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await loadDependencies();
+      renderContracts();
+    }
+
+    async function uploadDocument() {
+      const contractId = document.getElementById("doc_contract_id").value;
+      const file = document.getElementById("doc_file").files[0];
+      const box = document.getElementById("doc_result");
+
+      box.innerHTML = "";
+
+      if (!contractId) {
+        box.innerHTML = `<div class="item">Selecione um contrato.</div>`;
+        return;
+      }
+
+      if (!file) {
+        box.innerHTML = `<div class="item">Selecione um arquivo.</div>`;
+        return;
+      }
+
+      const ext = file.name.includes(".") ? file.name.split(".").pop() : "bin";
+      const path = `${currentProfile.company_id}/${contractId}/${crypto.randomUUID()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("contract-docs")
+        .upload(path, file, { upsert: false });
+
+      if (uploadError) {
+        box.innerHTML = `<div class="item">${uploadError.message}</div>`;
+        return;
+      }
+
+      const { data: publicData } = supabase.storage
+        .from("contract-docs")
+        .getPublicUrl(path);
+
+      const { error: insertError } = await supabase
+        .from("property_contract_documents")
+        .insert({
+          company_id: currentProfile.company_id,
+          contract_id: contractId,
+          file_name: file.name,
+          file_path: path,
+          file_url: publicData?.publicUrl || null,
+          mime_type: file.type || null,
+          file_size: file.size || null,
+          uploaded_by: currentUser.id
+        });
+
+      if (insertError) {
+        box.innerHTML = `<div class="item">${insertError.message}</div>`;
+        return;
+      }
+
+      box.innerHTML = `<div class="item">Documento enviado com sucesso.</div>`;
+      document.getElementById("doc_file").value = "";
+      await loadDependencies();
+      renderContracts();
+    }
+
+    function renderContracts() {
+      const status = document.getElementById("filter_status").value;
+      const type = document.getElementById("filter_type").value;
+      const box = document.getElementById("contracts_list");
+
+      let list = [...currentContracts];
+
+      if (status) {
+        list = list.filter(item => item.status === status);
+      }
+
+      if (type) {
+        list = list.filter(item => item.contract_type === type);
+      }
+
+      if (!list.length) {
+        box.innerHTML = `<div class="item">Nenhum contrato encontrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = list.map(contract => {
+        const property = findProperty(contract.property_id);
+        const client = findClient(contract.client_id);
+        const broker = findBroker(contract.broker_id);
+        const documents = getDocumentsByContract(contract.id);
+
+        return `
+          <div class="item">
+            <b>${contractTypeLabel(contract.contract_type)}</b><br>
+            Status: <span class="badge ${contract.status}">${contractStatusLabel(contract.status)}</span><br>
+            Imóvel: ${property?.title || "-"}<br>
+            Cliente: ${client?.full_name || "-"}<br>
+            Corretor: ${broker?.full_name || "-"}<br>
+            Valor: ${formatMoney(contract.price)}<br>
+            ${contract.start_date ? `Início: ${new Date(contract.start_date).toLocaleString("pt-BR")}<br>` : ""}
+            ${contract.end_date ? `Fim: ${new Date(contract.end_date).toLocaleString("pt-BR")}<br>` : ""}
+            ${contract.notes ? `<div class="muted" style="margin-top:8px;">${contract.notes}</div>` : ""}
+
+            <div class="row" style="margin-top:10px;">
+              <select onchange="updateContractStatus('${contract.id}', this.value)">
+                <option value="pending" ${contract.status === "pending" ? "selected" : ""}>Pendente</option>
+                <option value="in_progress" ${contract.status === "in_progress" ? "selected" : ""}>Em andamento</option>
+                <option value="signed" ${contract.status === "signed" ? "selected" : ""}>Assinado</option>
+                <option value="cancelled" ${contract.status === "cancelled" ? "selected" : ""}>Cancelado</option>
+              </select>
+            </div>
+
+            <div style="margin-top:10px;">
+              <b>Documentos (${documents.length})</b>
+              ${documents.length ? documents.map(doc => `
+                <div>
+                  <a class="doc-link" href="${doc.file_url || "#"}" target="_blank">${doc.file_name}</a>
+                </div>
+              `).join("") : `<div class="muted" style="margin-top:6px;">Nenhum documento enviado.</div>`}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadPage() {
+      const session = await getSession();
+
+      if (!session) {
+        location.href = "./app.html";
+        return;
+      }
+
+      currentUser = await getUser();
+      currentProfile = await getProfile();
+
+      if (!currentProfile) {
+        location.href = "./app.html";
+        return;
+      }
+
+      document.getElementById("page_subtitle").textContent =
+        `${currentProfile.imobix_companies?.name || "Imobiliária"} • ${roleLabel(currentProfile.role)} • Contratos`;
+
+      if (currentProfile.role === "client") {
+        document.getElementById("access_warning").classList.remove("hidden");
+        document.getElementById("contracts_content").classList.add("hidden");
+        return;
+      }
+
+      document.getElementById("access_warning").classList.add("hidden");
+      document.getElementById("contracts_content").classList.remove("hidden");
+
+      await loadDependencies();
+      renderContracts();
+    }
+
+    loadPage();
+
+    window.logout = logout;
+    window.loadPage = loadPage;
+    window.createContract = createContract;
+    window.clearContractForm = clearContractForm;
+    window.updateContractStatus = updateContractStatus;
+    window.uploadDocument = uploadDocument;
+    window.renderContracts = renderContracts;
+  </script>
+</body>
+</html>
