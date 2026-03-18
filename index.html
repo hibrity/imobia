@@ -2,22 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Imobink • Plataforma imobiliária</title>
-
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    window.supabase = createClient(
-      "https://bcfjciljugeascgyokxa.supabase.co",
-      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
-    );
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Imobia • Portal</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -27,8 +16,8 @@
     }
 
     .wrap {
-      max-width: 1200px;
-      margin: auto;
+      max-width: 1100px;
+      margin: 0 auto;
       padding: 20px;
     }
 
@@ -37,8 +26,8 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 30px;
     }
 
     .brand {
@@ -46,24 +35,20 @@
       font-weight: bold;
     }
 
-    .actions {
+    .nav {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    button,
-    a.btn {
-      padding: 12px 18px;
+    .btn {
+      padding: 10px 14px;
       border-radius: 10px;
-      border: none;
-      cursor: pointer;
       font-weight: bold;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
     }
 
     .primary {
@@ -76,128 +61,53 @@
       color: white;
     }
 
-    .outline {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,.2);
-      color: white;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 24px;
-      border-radius: 16px;
-      margin-bottom: 18px;
-    }
-
     .hero {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     .hero h1 {
-      margin: 0;
-      font-size: 32px;
+      font-size: 34px;
+      margin-bottom: 10px;
     }
 
     .hero p {
       color: #cbd5e1;
-      margin-top: 10px;
     }
 
-    .search-card {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
+    .card {
+      background: #1e293b;
       padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
     }
 
-    .search-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    input,
-    select {
+    input, select {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       border-radius: 10px;
       border: none;
-      font-size: 15px;
-    }
-
-    .results {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 14px;
-    }
-
-    .property {
-      background: #0b1220;
-      border-radius: 14px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .property-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .muted {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #22c55e;
+      margin-top: 10px;
+      background: white;
       color: black;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      margin-top: 8px;
-      font-weight: bold;
     }
 
-    .section-title-row {
+    .row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
     }
 
-    .section-title-row h2 {
-      margin: 0;
+    .row > * {
+      flex: 1;
+      min-width: 150px;
     }
 
-    .section-subtitle {
-      color: #cbd5e1;
-      font-size: 14px;
-      margin-top: 4px;
-    }
-
-    .empty-state {
+    .item {
       background: #0b1220;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 14px;
-      padding: 16px;
-      color: #cbd5e1;
-    }
-
-    @media (max-width: 900px) {
-      .search-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero h1 {
-        font-size: 26px;
-      }
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -205,216 +115,65 @@
 <body>
   <div class="wrap">
 
+    <!-- TOPO -->
     <div class="topbar">
-      <div class="brand">Imobink</div>
+      <div class="brand">Imobia</div>
 
-      <div class="actions">
-        <a class="btn ghost" href="./anunciar.html">Anunciar imóvel</a>
+      <div class="nav">
+        <!-- 🔥 CORRIGIDO -->
+        <a class="btn ghost" href="./app.html?mode=signup&role=client&next=anunciar.html">
+          Anunciar imóvel
+        </a>
+
         <a class="btn ghost" href="./imobia-ai.html">Imobia AI</a>
+
         <a class="btn primary" href="./app.html">Entrar</a>
-        <a class="btn outline" href="./app.html">Criar conta</a>
+
+        <a class="btn ghost" href="./app.html?mode=signup">
+          Criar conta
+        </a>
       </div>
     </div>
 
+    <!-- HERO -->
     <div class="hero">
       <h1>Encontre seu próximo imóvel</h1>
       <p>Busque casas, apartamentos, terrenos e imóveis comerciais em um só lugar.</p>
     </div>
 
+    <!-- BUSCA -->
     <div class="card">
-      <div class="search-card">
-        <h2 style="margin-top:0;">Buscar imóveis</h2>
+      <h3>Buscar imóveis</h3>
 
-        <div class="search-grid">
-          <input id="city" placeholder="Cidade" />
+      <div class="row">
+        <input placeholder="Cidade" />
+        <select>
+          <option>Tipo</option>
+          <option>Casa</option>
+          <option>Apartamento</option>
+          <option>Terreno</option>
+        </select>
+        <select>
+          <option>Finalidade</option>
+          <option>Venda</option>
+          <option>Aluguel</option>
+        </select>
+        <input placeholder="Preço máximo" />
+      </div>
 
-          <select id="type">
-            <option value="">Tipo</option>
-            <option value="house">Casa</option>
-            <option value="apartment">Apartamento</option>
-            <option value="land">Terreno</option>
-            <option value="commercial">Comercial</option>
-          </select>
-
-          <select id="purpose">
-            <option value="">Venda ou aluguel</option>
-            <option value="sale">Venda</option>
-            <option value="rent">Aluguel</option>
-          </select>
-
-          <input id="price" type="number" placeholder="Preço máximo" />
-        </div>
-
-        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="primary" onclick="searchProperties()">
-            Buscar
-          </button>
-
-          <button class="ghost" onclick="clearFilters()">
-            Limpar filtros
-          </button>
-        </div>
+      <div style="margin-top: 10px;">
+        <button class="btn primary">Buscar</button>
       </div>
     </div>
 
+    <!-- DESTAQUE -->
     <div class="card">
-      <div class="section-title-row">
-        <div>
-          <h2 id="resultsTitle">Imóveis em destaque</h2>
-          <div class="section-subtitle" id="resultsSubtitle">
-            Veja algumas opções disponíveis no portal.
-          </div>
-        </div>
-      </div>
+      <h3>Imóveis em destaque</h3>
+      <p style="color:#cbd5e1;">Veja algumas opções disponíveis no portal.</p>
 
-      <div id="list" class="results">
-        <div class="empty-state">Carregando imóveis...</div>
-      </div>
+      <div class="item">Carregando imóveis...</div>
     </div>
 
   </div>
-
-  <script>
-    function money(v) {
-      if (v === null || v === undefined || v === "") return "-";
-      return Number(v).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-    }
-
-    function labelType(v) {
-      if (v === "house") return "Casa";
-      if (v === "apartment") return "Apartamento";
-      if (v === "land") return "Terreno";
-      if (v === "commercial") return "Comercial";
-      return v || "-";
-    }
-
-    function labelPurpose(v) {
-      if (v === "sale") return "Venda";
-      if (v === "rent") return "Aluguel";
-      return v || "-";
-    }
-
-    function labelStatus(v) {
-      if (v === "available") return "Disponível";
-      if (v === "reserved") return "Reservado";
-      if (v === "sold") return "Vendido";
-      if (v === "rented") return "Alugado";
-      return v || "Disponível";
-    }
-
-    function hasFilters() {
-      return (
-        document.getElementById("city").value.trim() ||
-        document.getElementById("type").value ||
-        document.getElementById("purpose").value ||
-        document.getElementById("price").value
-      );
-    }
-
-    function updateSectionTitle(filteredCount, isSearching) {
-      const title = document.getElementById("resultsTitle");
-      const subtitle = document.getElementById("resultsSubtitle");
-
-      if (isSearching) {
-        title.textContent = "Resultados da busca";
-        subtitle.textContent = `${filteredCount} imóvel(is) encontrado(s).`;
-      } else {
-        title.textContent = "Imóveis em destaque";
-        subtitle.textContent = "Veja algumas opções disponíveis no portal.";
-      }
-    }
-
-    function render(items) {
-      const list = document.getElementById("list");
-
-      if (!items.length) {
-        list.innerHTML = `<div class="empty-state">Nenhum imóvel encontrado.</div>`;
-        return;
-      }
-
-      list.innerHTML = items.map(p => `
-        <div class="property">
-          <div class="property-title">${p.title || "Imóvel"}</div>
-
-          <div class="muted">
-            ${labelType(p.property_type)} • ${labelPurpose(p.purpose)}<br>
-            ${p.city || "-"}${p.neighborhood ? " • " + p.neighborhood : ""}<br>
-            Preço: ${money(p.price)}
-          </div>
-
-          <span class="badge">${labelStatus(p.status)}</span>
-
-          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="btn ghost" href="./imovel.html?id=${encodeURIComponent(p.id)}">
-              Ver imóvel
-            </a>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    async function searchProperties() {
-      const city = document.getElementById("city").value.trim();
-      const type = document.getElementById("type").value;
-      const purpose = document.getElementById("purpose").value;
-      const price = document.getElementById("price").value;
-
-      let query = supabase
-        .from("properties")
-        .select("*")
-        .eq("is_public", true)
-        .order("created_at", { ascending: false });
-
-      if (city) query = query.ilike("city", "%" + city + "%");
-      if (type) query = query.eq("property_type", type);
-      if (purpose) query = query.eq("purpose", purpose);
-
-      const { data, error } = await query;
-
-      if (error) {
-        document.getElementById("list").innerHTML = `<div class="empty-state">${error.message}</div>`;
-        return;
-      }
-
-      let items = data || [];
-
-      if (price) {
-        items = items.filter(p => Number(p.price || 0) <= Number(price));
-      }
-
-      updateSectionTitle(items.length, hasFilters());
-      render(items);
-    }
-
-    async function loadFeaturedProperties() {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("is_public", true)
-        .order("created_at", { ascending: false })
-        .limit(8);
-
-      if (error) {
-        document.getElementById("list").innerHTML = `<div class="empty-state">${error.message}</div>`;
-        return;
-      }
-
-      updateSectionTitle((data || []).length, false);
-      render(data || []);
-    }
-
-    function clearFilters() {
-      document.getElementById("city").value = "";
-      document.getElementById("type").value = "";
-      document.getElementById("purpose").value = "";
-      document.getElementById("price").value = "";
-      loadFeaturedProperties();
-    }
-
-    loadFeaturedProperties();
-  </script>
 </body>
 </html>
