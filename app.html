@@ -94,7 +94,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .row {
@@ -226,53 +226,55 @@
 
         <div id="signup_panel" class="hidden">
           <h2 class="section-title">Criar conta</h2>
-          <p class="section-text">Escolha o perfil e preencha apenas os campos necessários.</p>
+          <p class="section-text">Escolha o tipo de conta para continuar.</p>
 
           <select id="signup_role_select">
-            <option value="">Selecione o perfil</option>
+            <option value="">Selecione o tipo de conta</option>
             <option value="company">Imobiliária</option>
             <option value="broker">Corretor</option>
             <option value="client">Cliente</option>
           </select>
 
           <div id="signup_chooser_note" class="chooser-note">
-            Escolha um perfil para continuar.
+            Nenhum campo será exibido até você selecionar o tipo de conta.
           </div>
 
-          <div id="signup_company_fields" class="hidden">
-            <input id="signup_company_name" placeholder="Nome da imobiliária" />
-            <input id="signup_company_cnpj" placeholder="CNPJ" />
-            <input id="signup_company_phone" placeholder="Telefone" />
-            <input id="signup_company_city" placeholder="Cidade" />
-            <input id="signup_company_full_name" placeholder="Seu nome completo" />
-          </div>
-
-          <div id="signup_broker_fields" class="hidden">
-            <input id="signup_broker_full_name" placeholder="Nome completo" />
-            <input id="signup_broker_phone" placeholder="Telefone" />
-
-            <div class="row">
-              <input id="signup_broker_creci" placeholder="CRECI" />
-              <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
+          <div id="signup_form_block" class="hidden">
+            <div id="signup_company_fields" class="hidden">
+              <input id="signup_company_name" placeholder="Nome da imobiliária" />
+              <input id="signup_company_cnpj" placeholder="CNPJ" />
+              <input id="signup_company_phone" placeholder="Telefone" />
+              <input id="signup_company_city" placeholder="Cidade" />
+              <input id="signup_company_full_name" placeholder="Seu nome completo" />
             </div>
 
-            <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
-          </div>
+            <div id="signup_broker_fields" class="hidden">
+              <input id="signup_broker_full_name" placeholder="Nome completo" />
+              <input id="signup_broker_phone" placeholder="Telefone" />
 
-          <div id="signup_client_fields" class="hidden">
-            <input id="signup_client_full_name" placeholder="Nome completo" />
-            <input id="signup_client_phone" placeholder="Telefone" />
-          </div>
+              <div class="row">
+                <input id="signup_broker_creci" placeholder="CRECI" />
+                <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
+              </div>
 
-          <input id="signup_email" type="email" placeholder="Email" autocomplete="email" />
-          <input id="signup_password" type="password" placeholder="Senha" autocomplete="new-password" />
+              <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
+            </div>
 
-          <button id="signup_btn" class="primary full" type="button">Criar conta</button>
+            <div id="signup_client_fields" class="hidden">
+              <input id="signup_client_full_name" placeholder="Nome completo" />
+              <input id="signup_client_phone" placeholder="Telefone" />
+            </div>
 
-          <div id="signup_result"></div>
+            <input id="signup_email" type="email" placeholder="Email" autocomplete="email" />
+            <input id="signup_password" type="password" placeholder="Senha" autocomplete="new-password" />
 
-          <div class="help-note">
-            Se a confirmação de email estiver ativa no Supabase, confirme o email primeiro e depois entre.
+            <button id="signup_btn" class="primary full" type="button">Criar conta</button>
+
+            <div id="signup_result"></div>
+
+            <div class="help-note">
+              Se a confirmação de email estiver ativa no Supabase, confirme o email primeiro e depois entre.
+            </div>
           </div>
         </div>
       </div>
@@ -294,6 +296,8 @@
     const loginBtn = document.getElementById("login_btn");
     const signupBtn = document.getElementById("signup_btn");
     const signupRoleSelect = document.getElementById("signup_role_select");
+    const signupFormBlock = document.getElementById("signup_form_block");
+    const signupChooserNote = document.getElementById("signup_chooser_note");
 
     const params = new URLSearchParams(window.location.search);
     const requestedMode = params.get("mode");
@@ -348,44 +352,41 @@
       document.getElementById("signup_client_fields").classList.add("hidden");
     }
 
-    function updateChooserNote() {
-      const note = document.getElementById("signup_chooser_note");
-
+    function updateSignupVisibility() {
       if (!selectedSignupRole) {
-        note.classList.remove("hidden");
-        note.textContent = "Escolha um perfil para continuar.";
+        signupChooserNote.classList.remove("hidden");
+        signupFormBlock.classList.add("hidden");
+        resetSignupFields();
         return;
       }
 
-      note.classList.add("hidden");
+      signupChooserNote.classList.add("hidden");
+      signupFormBlock.classList.remove("hidden");
+      resetSignupFields();
+
+      if (selectedSignupRole === "company") {
+        document.getElementById("signup_company_fields").classList.remove("hidden");
+      }
+
+      if (selectedSignupRole === "broker") {
+        document.getElementById("signup_broker_fields").classList.remove("hidden");
+      }
+
+      if (selectedSignupRole === "client") {
+        document.getElementById("signup_client_fields").classList.remove("hidden");
+      }
     }
 
     function setSignupRole(role) {
       selectedSignupRole = role || null;
       signupRoleSelect.value = role || "";
-
-      resetSignupFields();
-
-      if (role === "company") {
-        document.getElementById("signup_company_fields").classList.remove("hidden");
-      }
-
-      if (role === "broker") {
-        document.getElementById("signup_broker_fields").classList.remove("hidden");
-      }
-
-      if (role === "client") {
-        document.getElementById("signup_client_fields").classList.remove("hidden");
-      }
-
-      updateChooserNote();
+      updateSignupVisibility();
     }
 
     function clearSignupRoleSelection() {
       selectedSignupRole = null;
       signupRoleSelect.value = "";
-      resetSignupFields();
-      updateChooserNote();
+      updateSignupVisibility();
     }
 
     function getDefaultRedirectByRole(role) {
@@ -582,7 +583,7 @@
       setBox("signup_result", "");
 
       if (!selectedSignupRole) {
-        setBox("signup_result", `<div class="item">Escolha primeiro um perfil para criar a conta.</div>`);
+        setBox("signup_result", `<div class="item">Selecione primeiro o tipo de conta.</div>`);
         return;
       }
 
