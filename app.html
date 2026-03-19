@@ -93,30 +93,6 @@
       line-height: 1.4;
     }
 
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .profile-option {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 14px 10px;
-      text-align: center;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .profile-option.active {
-      background: #22c55e;
-      color: black;
-      border-color: #22c55e;
-    }
-
     .hidden {
       display: none;
     }
@@ -206,10 +182,6 @@
     }
 
     @media (max-width: 700px) {
-      .profile-grid {
-        grid-template-columns: 1fr;
-      }
-
       .brand {
         font-size: 28px;
       }
@@ -256,11 +228,12 @@
           <h2 class="section-title">Criar conta</h2>
           <p class="section-text">Escolha o perfil e preencha apenas os campos necessários.</p>
 
-          <div class="profile-grid">
-            <div class="profile-option" data-role="company">Imobiliária</div>
-            <div class="profile-option" data-role="broker">Corretor</div>
-            <div class="profile-option" data-role="client">Cliente</div>
-          </div>
+          <select id="signup_role_select">
+            <option value="">Selecione o perfil</option>
+            <option value="company">Imobiliária</option>
+            <option value="broker">Corretor</option>
+            <option value="client">Cliente</option>
+          </select>
 
           <div id="signup_chooser_note" class="chooser-note">
             Escolha um perfil para continuar.
@@ -320,6 +293,7 @@
     const tabSignup = document.getElementById("tab_signup");
     const loginBtn = document.getElementById("login_btn");
     const signupBtn = document.getElementById("signup_btn");
+    const signupRoleSelect = document.getElementById("signup_role_select");
 
     const params = new URLSearchParams(window.location.search);
     const requestedMode = params.get("mode");
@@ -387,11 +361,8 @@
     }
 
     function setSignupRole(role) {
-      selectedSignupRole = role;
-
-      document.querySelectorAll(".profile-option").forEach(el => {
-        el.classList.toggle("active", el.dataset.role === role);
-      });
+      selectedSignupRole = role || null;
+      signupRoleSelect.value = role || "";
 
       resetSignupFields();
 
@@ -412,11 +383,7 @@
 
     function clearSignupRoleSelection() {
       selectedSignupRole = null;
-
-      document.querySelectorAll(".profile-option").forEach(el => {
-        el.classList.remove("active");
-      });
-
+      signupRoleSelect.value = "";
       resetSignupFields();
       updateChooserNote();
     }
@@ -682,10 +649,7 @@
 
     tabLogin.addEventListener("click", () => showTab("login"));
     tabSignup.addEventListener("click", () => showTab("signup"));
-
-    document.querySelectorAll(".profile-option").forEach(el => {
-      el.addEventListener("click", () => setSignupRole(el.dataset.role));
-    });
+    signupRoleSelect.addEventListener("change", e => setSignupRole(e.target.value || null));
 
     loginBtn.addEventListener("click", login);
     signupBtn.addEventListener("click", signup);
