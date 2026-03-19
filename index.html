@@ -2,21 +2,35 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Imobia • Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imoges • Gestão imobiliária inteligente</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --panel: #0b1220;
+      --text: #ffffff;
+      --muted: #cbd5e1;
+      --primary: #22c55e;
+      --ghost: #334155;
+      --border: rgba(255,255,255,.08);
+      --shadow: 0 10px 28px rgba(0,0,0,.22);
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .wrap {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -25,71 +39,98 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 26px;
     }
 
     .brand {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: bold;
+      margin: 0;
     }
 
-    .nav {
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .top-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
     .btn {
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: bold;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      text-decoration: none;
     }
 
     .primary {
-      background: #22c55e;
+      background: var(--primary);
       color: black;
     }
 
     .ghost {
-      background: #334155;
+      background: var(--ghost);
       color: white;
     }
 
     .hero {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .hero h1 {
-      font-size: 34px;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      color: #cbd5e1;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 16px;
       margin-bottom: 20px;
     }
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      margin-top: 10px;
-      background: white;
-      color: black;
+    .hero-card {
+      background: linear-gradient(180deg, rgba(30,41,59,1) 0%, rgba(15,23,42,1) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-title {
+      font-size: 34px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      line-height: 1.15;
+    }
+
+    .hero-text {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 760px;
+      margin: 0 0 18px 0;
+    }
+
+    .search-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .search-title {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .search-text {
+      color: var(--muted);
+      margin: 0 0 14px 0;
+      font-size: 14px;
     }
 
     .row {
@@ -103,77 +144,312 @@
       min-width: 150px;
     }
 
-    .item {
-      background: #0b1220;
-      padding: 12px;
+    input,
+    select {
+      width: 100%;
+      border: none;
       border-radius: 10px;
-      margin-top: 10px;
+      padding: 13px 14px;
+      font-size: 14px;
+      background: white;
+      color: black;
+      margin-top: 8px;
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .section-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .section-title {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .section-text {
+      color: var(--muted);
+      margin: 0 0 14px 0;
+      font-size: 14px;
+    }
+
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .property-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .property-image {
+      height: 170px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        linear-gradient(180deg, #475569 0%, #1e293b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.75);
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .property-body {
+      padding: 14px;
+    }
+
+    .property-title {
+      font-size: 17px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+    }
+
+    .property-meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .property-price {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .empty-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .properties-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero-title {
+        font-size: 28px;
+      }
+
+      .brand {
+        font-size: 26px;
+      }
+
+      .properties-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wrap {
+        padding: 16px;
+      }
+
+      .hero-card,
+      .search-card,
+      .section-card {
+        padding: 16px;
+      }
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
-
-    <!-- TOPO -->
     <div class="topbar">
-      <div class="brand">Imobia</div>
+      <div>
+        <div class="brand">Imoges</div>
+        <div class="subtitle">Gestão imobiliária inteligente</div>
+      </div>
 
-      <div class="nav">
-        <!-- 🔥 CORRIGIDO -->
-        <a class="btn ghost" href="./app.html?mode=signup&role=client&next=anunciar.html">
-          Anunciar imóvel
-        </a>
-
-        <a class="btn ghost" href="./imobia-ai.html">Imobia AI</a>
-
+      <div class="top-actions">
+        <a class="btn ghost" href="./app.html?mode=signup&next=anunciar.html">Anunciar imóvel</a>
+        <a class="btn ghost" href="./imobia-ai.html">IA</a>
         <a class="btn primary" href="./app.html">Entrar</a>
-
-        <a class="btn ghost" href="./app.html?mode=signup">
-          Criar conta
-        </a>
       </div>
     </div>
 
-    <!-- HERO -->
     <div class="hero">
-      <h1>Encontre seu próximo imóvel</h1>
-      <p>Busque casas, apartamentos, terrenos e imóveis comerciais em um só lugar.</p>
-    </div>
+      <div class="hero-card">
+        <h1 class="hero-title">Encontre imóveis, terrenos e oportunidades em um só lugar</h1>
+        <p class="hero-text">
+          O Imoges conecta clientes, corretores e imobiliárias em uma plataforma de gestão
+          imobiliária com busca, atendimento e apoio inteligente à decisão.
+        </p>
 
-    <!-- BUSCA -->
-    <div class="card">
-      <h3>Buscar imóveis</h3>
+        <div class="search-card">
+          <h2 class="search-title">Buscar imóveis</h2>
+          <p class="search-text">Preencha os filtros e toque em buscar.</p>
 
-      <div class="row">
-        <input placeholder="Cidade" />
-        <select>
-          <option>Tipo</option>
-          <option>Casa</option>
-          <option>Apartamento</option>
-          <option>Terreno</option>
-        </select>
-        <select>
-          <option>Finalidade</option>
-          <option>Venda</option>
-          <option>Aluguel</option>
-        </select>
-        <input placeholder="Preço máximo" />
+          <div class="row">
+            <input id="filter_city" placeholder="Cidade" />
+            <select id="filter_type">
+              <option value="">Tipo do imóvel</option>
+              <option value="house">Casa</option>
+              <option value="apartment">Apartamento</option>
+              <option value="land">Terreno</option>
+              <option value="commercial">Comercial</option>
+            </select>
+            <select id="filter_purpose">
+              <option value="">Finalidade</option>
+              <option value="sale">Venda</option>
+              <option value="rent">Aluguel</option>
+            </select>
+            <input id="filter_max_price" type="number" step="0.01" placeholder="Preço máximo" />
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="btn primary" onclick="loadFeaturedProperties()">Buscar</button>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div style="margin-top: 10px;">
-        <button class="btn primary">Buscar</button>
+    <div class="section">
+      <div class="section-card">
+        <h2 class="section-title">Imóveis em destaque</h2>
+        <p class="section-text">Veja alguns imóveis públicos disponíveis no portal.</p>
+
+        <div id="featured_list" class="properties-grid">
+          <div class="empty-box">Carregando imóveis...</div>
+        </div>
       </div>
     </div>
 
-    <!-- DESTAQUE -->
-    <div class="card">
-      <h3>Imóveis em destaque</h3>
-      <p style="color:#cbd5e1;">Veja algumas opções disponíveis no portal.</p>
-
-      <div class="item">Carregando imóveis...</div>
+    <div class="footer-note">
+      Imoges • Plataforma multi-imobiliária para gestão, atendimento e operação comercial.
     </div>
-
   </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://bcfjciljugeascgyokxa.supabase.co",
+      "sb_publishable_bFrxuAZOZprjXqrnhrjK2w_i1adudLw"
+    );
+
+    function formatMoney(value) {
+      if (value === null || value === undefined || value === "") return "-";
+      return Number(value).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function propertyTypeLabel(type) {
+      if (type === "house") return "Casa";
+      if (type === "apartment") return "Apartamento";
+      if (type === "land") return "Terreno";
+      if (type === "commercial") return "Comercial";
+      return type || "-";
+    }
+
+    function purposeLabel(value) {
+      if (value === "sale") return "Venda";
+      if (value === "rent") return "Aluguel";
+      return value || "-";
+    }
+
+    function renderProperties(list) {
+      const box = document.getElementById("featured_list");
+
+      if (!list || !list.length) {
+        box.innerHTML = `<div class="empty-box">Nenhum imóvel encontrado.</div>`;
+        return;
+      }
+
+      box.innerHTML = list.map(item => `
+        <div class="property-card">
+          <div class="property-image">
+            ${propertyTypeLabel(item.property_type)}
+          </div>
+
+          <div class="property-body">
+            <div class="property-title">${item.title || "Imóvel"}</div>
+
+            <div class="property-meta">
+              ${propertyTypeLabel(item.property_type)} • ${purposeLabel(item.purpose)}<br>
+              ${item.city || "-"}${item.neighborhood ? " • " + item.neighborhood : ""}<br>
+              ${item.area_m2 ? item.area_m2 + " m²" : "Área não informada"}
+            </div>
+
+            <div class="property-price">${formatMoney(item.price)}</div>
+
+            <a class="btn ghost" href="./imovel.html?property_id=${encodeURIComponent(item.id)}">Ver imóvel</a>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadFeaturedProperties() {
+      const city = document.getElementById("filter_city").value.trim();
+      const propertyType = document.getElementById("filter_type").value;
+      const purpose = document.getElementById("filter_purpose").value;
+      const maxPrice = document.getElementById("filter_max_price").value;
+
+      let query = supabase
+        .from("properties")
+        .select("*")
+        .eq("is_public", true)
+        .order("created_at", { ascending: false })
+        .limit(9);
+
+      if (city) {
+        query = query.ilike("city", `%${city}%`);
+      }
+
+      if (propertyType) {
+        query = query.eq("property_type", propertyType);
+      }
+
+      if (purpose) {
+        query = query.eq("purpose", purpose);
+      }
+
+      if (maxPrice) {
+        query = query.lte("price", Number(maxPrice));
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        document.getElementById("featured_list").innerHTML =
+          `<div class="empty-box">${error.message}</div>`;
+        return;
+      }
+
+      renderProperties(data || []);
+    }
+
+    loadFeaturedProperties();
+
+    window.loadFeaturedProperties = loadFeaturedProperties;
+  </script>
 </body>
 </html>
