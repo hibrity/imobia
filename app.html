@@ -301,7 +301,6 @@
 
     const params = new URLSearchParams(window.location.search);
     const requestedMode = params.get("mode");
-    const requestedRole = params.get("role");
     const requestedNext = params.get("next");
 
     let selectedSignupRole = null;
@@ -661,12 +660,7 @@
       showTab("login");
     }
 
-    if (requestedRole === "client" || requestedRole === "broker" || requestedRole === "company") {
-      setSignupRole(requestedRole);
-    } else {
-      clearSignupRoleSelection();
-    }
-
+    clearSignupRoleSelection();
     bootIfAlreadyLogged();
   </script>
 </body>
