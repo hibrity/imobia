@@ -6,13 +6,28 @@
   <title>Imoges • Acesso</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --panel: #0b1220;
+      --text: #ffffff;
+      --muted: #cbd5e1;
+      --primary: #22c55e;
+      --ghost: #334155;
+      --danger: #ef4444;
+      --border: rgba(255,255,255,.08);
+      --shadow: 0 10px 28px rgba(0,0,0,.22);
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
     }
 
@@ -26,7 +41,7 @@
 
     .auth-shell {
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
     }
 
     .topbar {
@@ -45,16 +60,17 @@
     }
 
     .subtitle {
-      color: #cbd5e1;
+      color: var(--muted);
       font-size: 14px;
       margin-top: 6px;
     }
 
     .card {
-      background: #1e293b;
+      background: var(--card);
       padding: 22px;
       border-radius: 18px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
     }
 
     .tabs {
@@ -71,12 +87,12 @@
       cursor: pointer;
       font-size: 15px;
       font-weight: bold;
-      background: #334155;
+      background: var(--ghost);
       color: white;
     }
 
     .tab-btn.active {
-      background: #22c55e;
+      background: var(--primary);
       color: black;
     }
 
@@ -87,10 +103,10 @@
     }
 
     .section-text {
-      color: #cbd5e1;
+      color: var(--muted);
       font-size: 14px;
       margin: 0 0 16px 0;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .hidden {
@@ -137,12 +153,12 @@
     }
 
     .primary {
-      background: #22c55e;
+      background: var(--primary);
       color: black;
     }
 
     .ghost {
-      background: #334155;
+      background: var(--ghost);
       color: white;
     }
 
@@ -151,34 +167,36 @@
     }
 
     .item {
-      background: #0b1220;
+      background: var(--panel);
       padding: 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,.06);
       margin-top: 10px;
       word-break: break-word;
+      line-height: 1.45;
     }
 
     .loading {
-      opacity: .7;
+      opacity: .75;
       pointer-events: none;
+    }
+
+    .chooser-note {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .help-note {
       color: #94a3b8;
       font-size: 13px;
       margin-top: 10px;
-      line-height: 1.4;
-    }
-
-    .chooser-note {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.06);
-      color: #cbd5e1;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-size: 14px;
+      line-height: 1.45;
     }
 
     @media (max-width: 700px) {
@@ -198,7 +216,7 @@
       <div class="topbar">
         <div>
           <div class="brand">Imoges</div>
-          <div class="subtitle">Plataforma imobiliária inteligente</div>
+          <div class="subtitle">Gestão imobiliária inteligente</div>
         </div>
 
         <div>
@@ -257,7 +275,7 @@
                 <input id="signup_broker_creci_state" placeholder="Estado do CRECI" />
               </div>
 
-              <input id="signup_broker_company_id" placeholder="ID da imobiliária (opcional)" />
+              <input id="signup_broker_company_id" placeholder="ID da imobiliária" />
             </div>
 
             <div id="signup_client_fields" class="hidden">
@@ -273,7 +291,8 @@
             <div id="signup_result"></div>
 
             <div class="help-note">
-              Se a confirmação de email estiver ativa no Supabase, confirme o email primeiro e depois entre.
+              Em ambiente de testes, o ideal é desativar a confirmação de email no Supabase.
+              Se ela estiver ativa, a conta pode ser criada e o perfil ficar pendente até o primeiro login confirmado.
             </div>
           </div>
         </div>
@@ -322,6 +341,7 @@
         "corretor-home.html",
         "dashboard.html",
         "contratos.html",
+        "imoges-ai.html",
         "imobia-ai.html"
       ];
 
@@ -415,7 +435,7 @@
     async function getProfile(userId) {
       const { data, error } = await supabase
         .from("imobix_users")
-        .select("*")
+        .select("*, imobix_companies(name)")
         .eq("user_id", userId)
         .eq("active", true)
         .limit(1)
@@ -450,7 +470,7 @@
       signupBtn.textContent = isLoading ? "Criando..." : "Criar conta";
     }
 
-    async function ensureCompanyProfileAfterSignup(userId, email) {
+    async function createCompanyAndAdmin(userId, email) {
       const companyName = document.getElementById("signup_company_name").value.trim();
       const companyCnpj = onlyDigits(document.getElementById("signup_company_cnpj").value);
       const companyPhone = document.getElementById("signup_company_phone").value.trim();
@@ -468,7 +488,7 @@
           cnpj: companyCnpj,
           phone: companyPhone || null,
           city: companyCity || null,
-          email: email
+          email: email || null
         })
         .select("*")
         .single();
@@ -489,21 +509,21 @@
       if (profileError) throw profileError;
     }
 
-    async function ensureBrokerProfileAfterSignup(userId) {
+    async function createBrokerProfile(userId) {
       const fullName = document.getElementById("signup_broker_full_name").value.trim();
       const phone = document.getElementById("signup_broker_phone").value.trim();
       const creci = document.getElementById("signup_broker_creci").value.trim();
       const creciState = document.getElementById("signup_broker_creci_state").value.trim();
       const companyId = document.getElementById("signup_broker_company_id").value.trim();
 
-      if (!fullName || !creci) {
-        throw new Error("Para corretor, preencha nome completo e CRECI.");
+      if (!fullName || !creci || !companyId) {
+        throw new Error("Para corretor, preencha nome, CRECI e ID da imobiliária.");
       }
 
       const { error } = await supabase
         .from("imobix_users")
         .insert({
-          company_id: companyId || null,
+          company_id: companyId,
           user_id: userId,
           full_name: fullName,
           phone: phone || null,
@@ -516,7 +536,7 @@
       if (error) throw error;
     }
 
-    async function ensureClientProfileAfterSignup(userId) {
+    async function createClientProfile(userId) {
       const fullName = document.getElementById("signup_client_full_name").value.trim();
       const phone = document.getElementById("signup_client_phone").value.trim();
 
@@ -564,7 +584,10 @@
         const redirected = await redirectLoggedUser();
 
         if (!redirected) {
-          setBox("login_result", `<div class="item">Conta encontrada, mas o perfil ainda não foi concluído.</div>`);
+          setBox(
+            "login_result",
+            `<div class="item">Conta encontrada, mas o perfil ainda não foi concluído no sistema. Verifique se o cadastro terminou corretamente em <code>imobix_users</code>.</div>`
+          );
         }
       } catch (error) {
         setBox("login_result", `<div class="item">${error.message || "Erro ao entrar."}</div>`);
@@ -616,16 +639,19 @@
         }
 
         if (!hasSession) {
-          setBox("signup_result", `<div class="item">Conta criada. Como a confirmação de email está ativa, confirme o email primeiro e depois entre para concluir o acesso.</div>`);
+          setBox(
+            "signup_result",
+            `<div class="item">Conta criada. Como a confirmação de email está ativa, confirme o email primeiro e depois entre para concluir o acesso.</div>`
+          );
           return;
         }
 
         if (selectedSignupRole === "company") {
-          await ensureCompanyProfileAfterSignup(userId, email);
+          await createCompanyAndAdmin(userId, email);
         } else if (selectedSignupRole === "broker") {
-          await ensureBrokerProfileAfterSignup(userId);
+          await createBrokerProfile(userId);
         } else if (selectedSignupRole === "client") {
-          await ensureClientProfileAfterSignup(userId);
+          await createClientProfile(userId);
         }
 
         const redirected = await redirectLoggedUser();
@@ -649,7 +675,7 @@
 
     tabLogin.addEventListener("click", () => showTab("login"));
     tabSignup.addEventListener("click", () => showTab("signup"));
-    signupRoleSelect.addEventListener("change", e => setSignupRole(e.target.value || null));
+    signupRoleSelect.addEventListener("change", (e) => setSignupRole(e.target.value || null));
 
     loginBtn.addEventListener("click", login);
     signupBtn.addEventListener("click", signup);
